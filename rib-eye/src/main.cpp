@@ -1,18 +1,18 @@
 #include <Arduino.h>
+#include <constants/pinsConfig.h>
+#include <components/Led.h>
 
-// put function declarations here:
-int myFunction(int, int);
+Led led(Pins::Led::LED_PIN);
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial.begin(115200);
+
+  led.init();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  led.on();
+  delay(1000);
+  led.off();
+  delay(1000);
 }
