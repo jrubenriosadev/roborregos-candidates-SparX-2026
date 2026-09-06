@@ -1,7 +1,7 @@
 #ifndef DEF_CONFIG
 #define DEF_CONFIG
 
-#include <stdint.h>
+#include <Arduino.h>
 
 namespace Pins {
 
@@ -10,11 +10,11 @@ namespace Pins {
     };
 
     struct Motors {
-        static constexpr uint8_t L_IN1 = 2;
-        static constexpr uint8_t L_IN2 = 3;
+        static constexpr uint8_t kLeftMotorIN1 = 2;
+        static constexpr uint8_t kLeftMotorIN2 = 3;
 
-        static constexpr uint8_t R_IN1 = 4;
-        static constexpr uint8_t R_IN2 = 5;
+        static constexpr uint8_t kRightMotorIN1 = 4;
+        static constexpr uint8_t kRightMotorIN2 = 5;
     };
 }
 
