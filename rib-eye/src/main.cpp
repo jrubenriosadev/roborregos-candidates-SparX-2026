@@ -9,8 +9,5 @@ void setup() {
 }
 
 void loop() {
-  robotContainer.moveForward(1000);
-  robotContainer.stop(100);
-  robotContainer.turnRight();
-  robotContainer.stop(100);
+  robotContainer.update();
 }
