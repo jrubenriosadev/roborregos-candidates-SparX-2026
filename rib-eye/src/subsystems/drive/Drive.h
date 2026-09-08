@@ -11,12 +11,11 @@ class Drive {
 
         void init();
 
-        void forward(uint32_t delayMillis);
-        void backward(uint32_t delayMillis);
+        void forward();
+        void backward();
         void turnLeft();
         void turnRight();
         void stop();
-        void stop(uint32_t delayMillis);
 
     private:
         Motor leftMotor, rightMotor;
