@@ -18,8 +18,8 @@ namespace Pins {
     };
 
     struct Ultrasonic {
-        static constexpr uint8_t kEcho = 0;
-        static constexpr uint8_t kTrigger = 0;
+        static constexpr uint8_t kEcho = 26;
+        static constexpr uint8_t kTrigger = 25;
     };
 }
 

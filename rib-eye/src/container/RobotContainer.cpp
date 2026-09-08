@@ -14,7 +14,7 @@ void RobotContainer::init() {
 void RobotContainer::update() {
     float distance = 0.0f;
     if (ultrasonic.readAsync(distance, 100)) {
-        if (distance > 0) {
+        if (distance > 0.0f) {
             Serial.print("Distancia: ");
             Serial.print(distance);
             Serial.println(" cm");
