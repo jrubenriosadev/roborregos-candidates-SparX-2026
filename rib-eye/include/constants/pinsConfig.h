@@ -24,6 +24,11 @@ namespace Pins {
         static constexpr uint8_t kEcho2 = 33;
         static constexpr uint8_t kTrigger2 = 27;
     };
+
+    struct Mpu {
+        static constexpr uint8_t kSCL = 22;
+        static constexpr uint8_t kSDA = 21;
+    };
 }
 
 #endif
