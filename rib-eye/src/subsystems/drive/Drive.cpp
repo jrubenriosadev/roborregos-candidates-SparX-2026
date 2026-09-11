@@ -33,3 +33,19 @@ void Drive::stop() {
     leftMotor.stop();
     rightMotor.stop();
 }
+
+void Drive::enableLeft(bool e) {
+    if(e) {
+        leftMotor.forward();
+    } else {
+        leftMotor.stop();
+    }
+}
+
+void Drive::enableRigt(bool e) {
+    if(e) {
+        rightMotor.forward();
+    } else {
+        rightMotor.stop();
+    }
+}
