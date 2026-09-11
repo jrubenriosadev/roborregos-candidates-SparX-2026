@@ -22,14 +22,14 @@ class RobotContainer {
     
     private:
         Drive drive;
-        Ultrasonic ultrasonic;
+        // Ultrasonic ultrasonic;
 
         DriveState currentState = DriveState::FORWARD;
         unsigned long stateTimer = 0;
 
-        static constexpr uint32_t FORWARD_TIME_MS = 1000;
+        static constexpr uint32_t FORWARD_TIME_MS = 2000;
         static constexpr uint32_t STOP_TIME_MS    = 100;
-        static constexpr uint32_t TURN_TIME_MS    = 150;
+        static constexpr uint32_t TURN_TIME_MS    = 825;
 };
 
 

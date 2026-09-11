@@ -1,17 +1,18 @@
 #include "RobotContainer.h"
 
-RobotContainer::RobotContainer()
-    : ultrasonic(Pins::Ultrasonic::kEcho, Pins::Ultrasonic::kTrigger){}
+RobotContainer::RobotContainer() {}
+    //: ultrasonic(Pins::Ultrasonic::kEcho, Pins::Ultrasonic::kTrigger){}
 
 void RobotContainer::init() {
     drive.init();
-    ultrasonic.init();
+    //ultrasonic.init();
 
     stateTimer = millis();
     drive.forward();
 }
 
 void RobotContainer::update() {
+    /*
     float distance = 0.0f;
     if (ultrasonic.readAsync(distance, 100)) {
         if (distance > 0.0f) {
@@ -21,7 +22,7 @@ void RobotContainer::update() {
         } else {
             Serial.println("Distancia: Fuera de rango");
         }
-    }
+    }*/
 
     unsigned long elapsedTime = millis() - stateTimer;
 
