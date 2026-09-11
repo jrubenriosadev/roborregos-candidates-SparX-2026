@@ -1,15 +1,15 @@
-#include "RobotContainer.h"
+#include "RobotContainerSquareTest.h"
 
-RobotContainer::RobotContainer() {}
+RobotContainerSquareTest::RobotContainerSquareTest() {}
 
-void RobotContainer::init() {
+void RobotContainerSquareTest::init() {
     drive.init();
 
     stateTimer = millis();
     drive.forward();
 }
 
-void RobotContainer::update() {
+void RobotContainerSquareTest::update() {
     unsigned long elapsedTime = millis() - stateTimer;
 
     switch (currentState) {

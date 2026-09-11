@@ -17,7 +17,7 @@ class Drive {
         void turnRight();
         void stop();
         void enableLeft(bool e);
-        void enableRigt(bool e);
+        void enableRight(bool e);
 
     private:
         Motor leftMotor, rightMotor;

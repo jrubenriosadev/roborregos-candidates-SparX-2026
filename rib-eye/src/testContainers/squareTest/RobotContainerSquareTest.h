@@ -1,5 +1,5 @@
-#ifndef DEF_CONTAINER
-#define DEF_CONTAINER
+#ifndef DEF_SQUARE_CONTAINER
+#define DEF_SQUARE_CONTAINER
 
 #include "Arduino.h"
 #include "subsystems/drive/Drive.h"
@@ -13,9 +13,9 @@ enum class DriveState {
     STOP_2
 };
 
-class RobotContainer {
+class RobotContainerSquareTest {
     public:
-        RobotContainer();
+        RobotContainerSquareTest();
 
         void init();
         void update();

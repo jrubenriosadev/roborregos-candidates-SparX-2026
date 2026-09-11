@@ -42,7 +42,7 @@ void Drive::enableLeft(bool e) {
     }
 }
 
-void Drive::enableRigt(bool e) {
+void Drive::enableRight(bool e) {
     if(e) {
         rightMotor.forward();
     } else {
