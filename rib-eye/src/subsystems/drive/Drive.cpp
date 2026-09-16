@@ -1,8 +1,8 @@
 #include "Drive.h"
 
 Drive::Drive() 
-    : leftMotor(Pins::Motors::kLeftMotorIN1, Pins::Motors::kLeftMotorIN2),
-      rightMotor(Pins::Motors::kRightMotorIN1, Pins::Motors::kRightMotorIN2) {}
+    : leftMotor(Pins::Motors::kLeftMotorIN1, Pins::Motors::kLeftMotorIN2, Pins::Motors::kLeftEncoderA, Pins::Motors::kLeftEncoderB),
+      rightMotor(Pins::Motors::kRightMotorIN1, Pins::Motors::kRightMotorIN2, Pins::Motors::kRightEncoderA, Pins::Motors::kRightEncoderB) {}
 
 void Drive::init() {
     leftMotor.init();

@@ -12,9 +12,13 @@ namespace Pins {
     struct Motors {
         static constexpr uint8_t kLeftMotorIN1 = 4;
         static constexpr uint8_t kLeftMotorIN2 = 2;
+        static constexpr uint8_t kLeftEncoderA = 19;
+        static constexpr uint8_t kLeftEncoderB = 18;
 
         static constexpr uint8_t kRightMotorIN1 = 19;
         static constexpr uint8_t kRightMotorIN2 = 18;
+        static constexpr uint8_t kRightEncoderA = 0;
+        static constexpr uint8_t kRightEncoderB = 0;
     };
 
     struct Ultrasonic {
