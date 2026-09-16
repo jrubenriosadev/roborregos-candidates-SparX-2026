@@ -1,7 +1,7 @@
 #include "RobotContainerEncodersTest.h"
 
 RobotContainerEncodersTest::RobotContainerEncodersTest() 
-    : motor(Pins::Motors::kLeftMotorIN1, Pins::Motors::kLeftMotorIN2, Pins::Motors::kLeftEncoderA, Pins::Motors::kLeftEncoderB),
+    : motor(Pins::Motors::kRightMotorIN1, Pins::Motors::kRightMotorIN2, Pins::Motors::kRightEncoderA, Pins::Motors::kRightEncoderB),
       timer(0), step(0) {}
 
 void RobotContainerEncodersTest::init() {

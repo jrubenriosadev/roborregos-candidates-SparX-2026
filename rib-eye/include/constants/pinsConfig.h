@@ -15,10 +15,10 @@ namespace Pins {
         static constexpr uint8_t kLeftEncoderA = 19;
         static constexpr uint8_t kLeftEncoderB = 18;
 
-        static constexpr uint8_t kRightMotorIN1 = 19;
-        static constexpr uint8_t kRightMotorIN2 = 18;
-        static constexpr uint8_t kRightEncoderA = 0;
-        static constexpr uint8_t kRightEncoderB = 0;
+        static constexpr uint8_t kRightMotorIN1 = 14;
+        static constexpr uint8_t kRightMotorIN2 = 12;
+        static constexpr uint8_t kRightEncoderA = 16;
+        static constexpr uint8_t kRightEncoderB = 17;
     };
 
     struct Ultrasonic {
