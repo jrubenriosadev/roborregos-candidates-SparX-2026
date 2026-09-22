@@ -3,7 +3,7 @@
 
 #include "Arduino.h"
 #include "constants/pinsConfig.h"
-#include "components/motor/Motor.h"
+#include "components/motor/Motor.hpp"
 
 class Drive {
     public:

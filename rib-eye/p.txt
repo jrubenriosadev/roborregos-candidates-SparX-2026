@@ -1,1 +1,4 @@
 sudo chmod 666 /dev/ttyUSB0
+
+/run/host/usr/include/opencv4/**
+g++ main.cpp -o test $(pkg-config --cflags --libs opencv4)
