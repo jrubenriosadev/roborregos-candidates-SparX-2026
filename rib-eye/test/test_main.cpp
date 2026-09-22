@@ -1,5 +1,5 @@
+#include <Arduino.h>
 #include <unity.h>
-#include "Arduino.h"
 
 void test_chip_model_not_null(void) {
     TEST_ASSERT_NOT_NULL(ESP.getChipModel());
