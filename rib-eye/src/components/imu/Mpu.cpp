@@ -4,7 +4,8 @@
 #include <math.h>
 
 Mpu::Mpu()
-    : isInit(false),
+    : mpu(),
+      isInit(false),
       lastReadTime(0),
       accelOffsetX(0),
       accelOffsetY(0),
@@ -65,13 +66,8 @@ void Mpu::calibrate() {
     delay(MpuConfig::kInitDelayMs);
 
     for (int i = 0; i < kCalibrationSamples; ++i) {
-        int16_t accelX;
-        int16_t accelY;
-        int16_t accelZ;
-
-        int16_t gyroX;
-        int16_t gyroY;
-        int16_t gyroZ;
+        int16_t accelX, accelY, accelZ;
+        int16_t gyroX, gyroY, gyroZ;
 
         mpu.getMotion6(&accelX, &accelY, &accelZ, &gyroX, &gyroY, &gyroZ);
 
@@ -84,11 +80,12 @@ void Mpu::calibrate() {
         sumGyroZ += gyroZ;
 
         delay(MpuConfig::kCalibrationDelayMs);
+        
+        yield(); 
     }
 
     accelOffsetX = sumAccelX / kCalibrationSamples;
     accelOffsetY = sumAccelY / kCalibrationSamples;
-
     accelOffsetZ = (sumAccelZ / kCalibrationSamples) - MpuConfig::kAccelGravityRaw;
 
     gyroOffsetX = sumGyroX / kCalibrationSamples;

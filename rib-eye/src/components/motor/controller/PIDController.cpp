@@ -16,10 +16,11 @@ void PIDController::reset() {
 
 float PIDController::CWErr(float setpoint, float measurement) const {
   float err = setpoint - measurement;
-  err = fmod(err + M_PI, 2.0f * M_PI);
-  if(err < 0.0f) { err += 2.0f * M_PI; }
+  
+  while (err > M_PI) { err -= 2.0f * M_PI; }
+  while (err < -M_PI) { err += 2.0f * M_PI; }
 
-  return err - M_PI;
+  return err;
 }
 
 float PIDController::update(float measurement, float setpoint) {
@@ -43,7 +44,6 @@ float PIDController::update(float measurement, float setpoint, float dt) {
   }
 
   float err = _angleWrapping ? CWErr(setpoint, measurement) : (setpoint - measurement);
-
   lastErr = err;
 
   float pT = _kp * err;
@@ -74,17 +74,13 @@ void PIDController::setOutputLimits(float minOutput, float maxOutput) {
 
 void PIDController::setEnabled(bool e) {
   _isEnabled = e;
-  if(!_isEnabled) {
-    reset();
-  }
+  if(!_isEnabled) reset();
 }
 
-void PIDController::setAngleWrapping(bool e) {
-  _angleWrapping = e;
-}
-
+void PIDController::setAngleWrapping(bool e) { _angleWrapping = e; }
 bool PIDController::isEnabled() const { return _isEnabled; }
 bool PIDController::isAnlgeWrapping() const { return _angleWrapping; }
+float PIDController::getErr() const { return lastErr; }
 float PIDController::getOutput() const { return lastOutput; }
 float PIDController::getKp() const { return _kp; }
 float PIDController::getKi() const { return _ki; }

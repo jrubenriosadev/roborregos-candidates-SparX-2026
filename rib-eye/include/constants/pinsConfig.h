@@ -15,7 +15,7 @@ namespace Pins {
         static constexpr uint8_t kLeftEncoderA = 34;
         static constexpr uint8_t kLeftEncoderB = 35;
         static constexpr uint8_t kLeftPWM = 25;
-        static constexpr float kLeftPPR = 0;
+        static constexpr float kLeftPPR = 475.0f;
         static constexpr bool leftInversion = false;
 
         static constexpr uint8_t kRightMotorIN1 = 12;
@@ -23,10 +23,10 @@ namespace Pins {
         static constexpr uint8_t kRightEncoderA = 2;
         static constexpr uint8_t kRightEncoderB = 4;
         static constexpr uint8_t kRightPWM = 26;
-        static constexpr float kRightPPR = 0;
+        static constexpr float kRightPPR = 475.0f;;
         static constexpr bool rightInversion = true;
 
-        static constexpr float kWheelDiameter = 0.06f;
+        static constexpr float kWheelDiameter = 0.065f;
     };
 
     struct Ultrasonic {

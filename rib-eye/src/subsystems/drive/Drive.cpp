@@ -6,9 +6,9 @@ Drive::Drive()
     _leftMotor(
         Pins::Motors::kLeftMotorIN1, 
         Pins::Motors::kLeftMotorIN2, 
+        Pins::Motors::kLeftPWM,
         Pins::Motors::kLeftEncoderA, 
         Pins::Motors::kLeftEncoderB,
-        Pins::Motors::kLeftPWM,
         Pins::Motors::kLeftPPR,
         Pins::Motors::kWheelDiameter,
         Pins::Motors::leftInversion
@@ -17,19 +17,19 @@ Drive::Drive()
     _rightMotor(
         Pins::Motors::kRightMotorIN1, 
         Pins::Motors::kRightMotorIN2, 
+        Pins::Motors::kRightPWM,
         Pins::Motors::kRightEncoderA, 
         Pins::Motors::kRightEncoderB,
-        Pins::Motors::kRightPWM,
         Pins::Motors::kRightPPR,
         Pins::Motors::kWheelDiameter,
         Pins::Motors::rightInversion
     ),
 
-    _pidLF(0.0f,0.0f,0.0f,-255.0f,255.0f),
+    _pidLF(100.0f,0.0f,10.0f,-255.0f,255.0f),
 
-    _pidRF(0.0f,0.0f,0.0f,-255.0f,255.0f),
+    _pidRF(100.0f,0.0f,10.0f,-255.0f,255.0f),
 
-    _steerPID(0.0f,0.0f,0.0f,-255.0f,255.0f),
+    _steerPID(100.0f,0.0f,5.0f,-255.0f,255.0f),
 
     _targetDistance(0.0f),
     
@@ -56,6 +56,11 @@ void Drive::prepDistance(float m_distance) {
     _pidRF.reset();
 
     _targetDistance = m_distance;
+}
+
+void Drive::setOpenLoop(int leftSpeed, int rightSpeed) {
+    _leftMotor.move(leftSpeed);
+    _rightMotor.move(rightSpeed);
 }
 
 bool Drive::moveToDistance() {
@@ -111,6 +116,14 @@ void Drive::setRightForwardGains(float kp, float ki, float kd) {
 
 void Drive::setSteerGains(float kp, float ki, float kd) {
     _steerPID.setGains(kp, ki, kd);
+}
+
+float Drive::getLeftDistance() const {
+    return _leftMotor.getDistanceMeters();
+}
+
+float Drive::getRightDistance() const {
+    return _rightMotor.getDistanceMeters();
 }
 
 long Drive::getLeftTicks() const {
