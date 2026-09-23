@@ -10,19 +10,19 @@ namespace Pins {
     };
 
     struct Motors {
-        static constexpr uint8_t kLeftMotorIN1 = 4;
-        static constexpr uint8_t kLeftMotorIN2 = 2;
-        static constexpr uint8_t kLeftEncoderA = 19;
-        static constexpr uint8_t kLeftEncoderB = 18;
-        static constexpr uint8_t kLeftPWM = 0;
+        static constexpr uint8_t kLeftMotorIN1 = 32;
+        static constexpr uint8_t kLeftMotorIN2 = 33;
+        static constexpr uint8_t kLeftEncoderA = 34;
+        static constexpr uint8_t kLeftEncoderB = 35;
+        static constexpr uint8_t kLeftPWM = 25;
         static constexpr float kLeftPPR = 0;
         static constexpr bool leftInversion = false;
 
-        static constexpr uint8_t kRightMotorIN1 = 14;
-        static constexpr uint8_t kRightMotorIN2 = 12;
-        static constexpr uint8_t kRightEncoderA = 16;
-        static constexpr uint8_t kRightEncoderB = 17;
-        static constexpr uint8_t kRightPWM = 0;
+        static constexpr uint8_t kRightMotorIN1 = 12;
+        static constexpr uint8_t kRightMotorIN2 = 13;
+        static constexpr uint8_t kRightEncoderA = 2;
+        static constexpr uint8_t kRightEncoderB = 4;
+        static constexpr uint8_t kRightPWM = 26;
         static constexpr float kRightPPR = 0;
         static constexpr bool rightInversion = true;
 
@@ -30,11 +30,11 @@ namespace Pins {
     };
 
     struct Ultrasonic {
-        static constexpr uint8_t kEcho1 = 26;
-        static constexpr uint8_t kTrigger1 = 25;
+        static constexpr uint8_t kEcho1 = 0;
+        static constexpr uint8_t kTrigger1 = 0;
 
-        static constexpr uint8_t kEcho2 = 33;
-        static constexpr uint8_t kTrigger2 = 27;
+        static constexpr uint8_t kEcho2 = 0;
+        static constexpr uint8_t kTrigger2 = 0;
     };
 
     struct Mpu {

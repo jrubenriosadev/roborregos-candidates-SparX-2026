@@ -100,3 +100,22 @@ bool Drive::turnToAngle(float current_yawDeg) {
     return false;
 }
 
+void Drive::setLeftForwardGains(float kp, float ki, float kd) {
+    _pidLF.setGains(kp,ki,kd);
+}
+
+void Drive::setRightForwardGains(float kp, float ki, float kd) {
+    _pidRF.setGains(kp,ki,kd);
+}
+
+void Drive::setSteerGains(float kp, float ki, float kd) {
+    _steerPID.setGains(kp, ki, kd);
+}
+
+long Drive::getLeftTicks() const {
+    return _leftMotor.getEncoder();
+}
+
+long Drive::getRightTicks() const {
+    return _rightMotor.getEncoder();
+}
