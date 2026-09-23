@@ -102,6 +102,7 @@ bool Drive::turnToAngle(float current_yawDeg) {
 
 void Drive::setLeftForwardGains(float kp, float ki, float kd) {
     _pidLF.setGains(kp,ki,kd);
+    _pidRF.setGains(kp,ki,kd);
 }
 
 void Drive::setRightForwardGains(float kp, float ki, float kd) {

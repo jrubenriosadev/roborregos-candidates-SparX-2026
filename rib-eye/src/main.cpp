@@ -1,8 +1,10 @@
 #include "container/RobotContainer.hpp"
 #include "stateMachine/StateMachine.hpp"
+#include "tuning/TuningMode.hpp"
 
 RobotContainer container;
-StateMachine stateMachine(container);
+//StateMachine stateMachine(container);
+TuningMode tun;
 
 void setup() {
     Serial.begin(115200);
@@ -10,5 +12,6 @@ void setup() {
 }
 
 void loop() {
-    stateMachine.update();
+    //stateMachine.update();
+    tun.run();
 }

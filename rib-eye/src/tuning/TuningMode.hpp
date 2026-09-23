@@ -7,15 +7,14 @@ class TuningMode {
     public:
         TuningMode(RobotContainer& container);
         void run();
+        void processSerialCmd();
+        void printTelemetry();
     
     private:
         RobotContainer& container;
         float kp, ki, kd;
         float setpoint;
         bool tuningFM; // FOrward mode
-
-        void processSerialCmd();
-        void printTelemetry();
 
 };
 
