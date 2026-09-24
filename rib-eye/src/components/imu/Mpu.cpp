@@ -40,7 +40,7 @@ bool Mpu::init() {
     mpu.setSleepEnabled(false);
     mpu.setClockSource(MPU6050_CLOCK_PLL_XGYRO);
     mpu.setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
-    mpu.setFullScaleGyroRange(MPU6050_GYRO_FS_1000);
+    mpu.setFullScaleGyroRange(MPU6050_GYRO_FS_500);
     mpu.setDLPFMode(MPU6050_DLPF_BW_42);
     mpu.setRate(4);
 

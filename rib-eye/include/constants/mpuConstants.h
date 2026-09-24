@@ -13,7 +13,7 @@ namespace MpuConfig {
 
     constexpr int32_t kAccelGravityRaw = 16384;
 
-    constexpr float kGyroSensitivity = 32.8f;
+    constexpr float kGyroSensitivity = 65.536f;
 
     constexpr float kMsToSeconds = 1000.0f;
     constexpr float kRadToDeg = 57.2957795f;
