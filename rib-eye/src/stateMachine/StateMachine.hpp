@@ -8,7 +8,8 @@ enum class States {
     A_MOVE,
     A_IDLE,
     B_TURN,
-    B_IDLE
+    B_IDLE,
+    DONE
 };
 
 class StateMachine {
@@ -22,6 +23,8 @@ class StateMachine {
 
         unsigned long _pst;
         bool _isLeft;
+        float _targetAngle = 0.0f;
+        int _sideCount = 0;
 };
 
 #endif

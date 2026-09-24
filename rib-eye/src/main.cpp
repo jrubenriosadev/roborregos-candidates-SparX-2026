@@ -1,32 +1,35 @@
-#include "container/RobotContainer.hpp"
-#include "stateMachine/StateMachine.hpp"
-#include "tuning/TuningMode.hpp"
-#include "tuning/Encoders/EncoderTestMode.hpp"
-#include "tuning/Mpu/MpuTestMode.hpp"
+#include <Arduino.h>
+#include "components/tof-sensor/ToF.hpp"
 
-constexpr bool isTuningMode = false;
-constexpr bool isEncodersTest = false;
-constexpr bool isMpuTest = true;
+#define XSHUT_1 14
+#define XSHUT_2 27
 
-RobotContainer container;
-StateMachine stateMachine(container);
-TuningMode tun(container);
-EncoderTestMode enc(container);
-MpuTestMode mpuTest(container);
+#define ADDR_1 0x30
+#define ADDR_2 0x31
+
+ToF sensor1(XSHUT_1, ADDR_1);
+ToF sensor2(XSHUT_2, ADDR_2);
 
 void setup() {
     Serial.begin(115200);
-    container.init();
+    Wire.begin(21,22);
+
+    if (!sensor1.init()) {
+        Serial.println("Error iniciando Sensor 1");
+    }
+    if (!sensor2.init()) {
+        Serial.println("Error iniciando Sensor 2");
+    }
 }
 
 void loop() {
-    if(isTuningMode) {
-        tun.run();
-    } else if(isEncodersTest) {
-        enc.run();
-    } else if(isMpuTest) {
-        mpuTest.run();
-    } else {
-        stateMachine.update();
+    sensor1.update();
+    sensor2.update();
+
+    static unsigned long lastPrint = 0;
+    if (millis() - lastPrint >= 100) {
+        lastPrint = millis();
+
+        Serial.printf("S1: %d mm | S2: %d mm\n", sensor1.getDistance(), sensor2.getDistance());
     }
 }
