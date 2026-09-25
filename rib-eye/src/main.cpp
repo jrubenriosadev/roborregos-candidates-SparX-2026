@@ -14,12 +14,23 @@ void setup() {
     delay(1000);
 
     container.init();
+
     Serial.println("pepelin");
 }
 
+
 void loop() {
     container.update();
-    stateMachine.update();
+
+    container.getDrive().setOpenLoop(100, 100);
+
+    delay(1000);
+
+    container.getDrive().stop();
+
+    delay(1000);
+    //container.update();
+   // stateMachine.update();
     //container.getDrive().setOpenLoop(80,0);
     // pidTest.run();
     // encoderTest.run();

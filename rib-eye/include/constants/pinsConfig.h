@@ -24,7 +24,7 @@ namespace Pins {
         static constexpr uint8_t kRightEncoderB = 17;
         static constexpr uint8_t kRightPWM = 32;
         static constexpr float kRightPPR = 490.0f;;
-        static constexpr bool rightInversion = true;
+        static constexpr bool rightInversion = false;
 
         static constexpr float kWheelDiameter = 0.067f;
     };
