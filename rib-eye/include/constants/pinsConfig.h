@@ -18,13 +18,13 @@ namespace Pins {
         static constexpr float kLeftPPR = 490.0f;
         static constexpr bool leftInversion = false;
 
-        static constexpr uint8_t kRightMotorIN1 = 33;
-        static constexpr uint8_t kRightMotorIN2 = 14;
+        static constexpr uint8_t kRightMotorIN1 = 14;
+        static constexpr uint8_t kRightMotorIN2 = 33;
         static constexpr uint8_t kRightEncoderA = 16;
         static constexpr uint8_t kRightEncoderB = 17;
         static constexpr uint8_t kRightPWM = 32;
         static constexpr float kRightPPR = 490.0f;;
-        static constexpr bool rightInversion = false;
+        static constexpr bool rightInversion = true;
 
         static constexpr float kWheelDiameter = 0.067f;
     };

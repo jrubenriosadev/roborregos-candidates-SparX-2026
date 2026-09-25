@@ -16,19 +16,15 @@ void setup() {
     container.init();
 
     Serial.println("pepelin");
+
+    container.getDrive().prepDistance(0.5f);
 }
 
 
 void loop() {
-    container.update();
+    container.getDrive().moveToDistance();
 
-    container.getDrive().setOpenLoop(100, 100);
-
-    delay(1000);
-
-    container.getDrive().stop();
-
-    delay(1000);
+    delay(20);
     //container.update();
    // stateMachine.update();
     //container.getDrive().setOpenLoop(80,0);

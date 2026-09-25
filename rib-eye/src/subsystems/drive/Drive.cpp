@@ -25,9 +25,9 @@ Drive::Drive()
         Pins::Motors::rightInversion
     ),
 
-    _pidLF(600.0f,0.0f,0.0f,-255.0f,255.0f),
+    _pidLF(600.0f,10.0f,0.0f,-255.0f,255.0f),
 
-    _pidRF(600.0f,0.0f,0.0f,-255.0f,255.0f),
+    _pidRF(600.0f,10.0f,0.0f,-255.0f,255.0f),
 
     _steerPID(0.0f,0.0f,0.0f,-255.0f,255.0f),
 
@@ -66,7 +66,6 @@ void Drive::setOpenLoop(int leftSpeed, int rightSpeed) {
 }
 
 bool Drive::moveToDistance() {
-    Serial.print("?");
     float currentLeftDistance = _leftMotor.getDistanceMeters();
     float currentRightDistance = _rightMotor.getDistanceMeters();
 
