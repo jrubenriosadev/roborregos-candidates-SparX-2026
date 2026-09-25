@@ -5,26 +5,19 @@
 
 enum class States {
     INIT,
-    A_MOVE,
-    A_IDLE,
-    B_TURN,
-    B_IDLE,
-    DONE
+    MOVE,
+    IDLE
 };
 
 class StateMachine {
     public:
         StateMachine(RobotContainer& container);
         void update();
+
     private:
         RobotContainer& _container;
         States _currentState;
-        MpuData _imuData;
-
         unsigned long _pst;
-        bool _isLeft;
-        float _targetAngle = 0.0f;
-        int _sideCount = 0;
 };
 
 #endif

@@ -1,64 +1,51 @@
 #include "StateMachine.hpp"
+#include <Arduino.h>
 
 StateMachine::StateMachine(RobotContainer& container)
     : _container(container),
-     _currentState(States::INIT),
-     _pst(0),
-     _isLeft(false) {}
+      _currentState(States::INIT),
+      _pst(0) {}
 
 void StateMachine::update() {
-    _container.getMpu().readAsync(_imuData);
+    static unsigned long lastPrint = 0;
 
     switch(_currentState) {
-
         case States::INIT:
-            _sideCount = 0;
-            _container.getDrive().prepDistance(1.0f);
-            _currentState = States::A_MOVE;
+            Serial.println("[STATE] INIT -> Reasegurando ganancias PID");
+            _container.getDrive().setLeftForwardGains(600.0f, 0.0f, 0.0f);
+            _container.getDrive().prepDistance(0.5f);
+            _currentState = States::MOVE;
             break;
 
-        case States::A_MOVE:
-            if(_container.getDrive().moveToDistance()){
+        case States::MOVE:
+            if (millis() - lastPrint >= 150) {
+                lastPrint = millis();
+                Serial.print("Dist L: ");
+                Serial.print(_container.getDrive().getLeftDistance(), 3);
+                Serial.print(" m | Dist R: ");
+                Serial.print(_container.getDrive().getRightDistance(), 3);
+                Serial.print(" m");
+            }
+
+            // === PRUEBA DE DIAGNÓSTICO ===
+            // Si quieres verificar si los motores se mueven físicamente SIN PID,
+            // descomenta la siguiente línea y comenta la llamada a moveToDistance():
+             _container.getDrive().setOpenLoop(200, 200);
+
+            /*
+            if (_container.getDrive().moveToDistance()) {
+                Serial.println("\n[STATE] ¡Meta alcanzada!");
                 _pst = millis();
-                _sideCount++;
-                _currentState = States::A_IDLE;
-            }
+                _currentState = States::IDLE;
+            }*/
             break;
 
-        case States::A_IDLE:
-            if(millis() - _pst >= 1000) {
-                if (_sideCount >= 4) {
-                    _currentState = States::DONE; 
-                    break;
-                }
-
-                float delta = _isLeft ? -90.0f : 90.0f;
-                _targetAngle = _imuData.yaw + delta;
-
-                if (_targetAngle > 180.0f) _targetAngle -= 360.0f;
-                if (_targetAngle < -180.0f) _targetAngle += 360.0f;
-
-                _container.getDrive().prepAngle(_targetAngle);
-                _currentState = States::B_TURN;
+        case States::IDLE:
+            if (millis() - _pst >= 1000) {
+                Serial.println("\n[STATE] Reiniciando ciclo de movimiento...");
+                _container.getDrive().prepDistance(0.5f);
+                _currentState = States::MOVE;
             }
-            break;
-
-        case States::B_TURN:
-            if(_container.getDrive().turnToAngle(_imuData.yaw)) {
-                _pst = millis();
-                _currentState = States::B_IDLE;
-            }
-            break;
-
-        case States::B_IDLE:
-            if(millis() - _pst >= 1000) {
-                _container.getDrive().prepDistance(1.0f);
-                _currentState = States::A_MOVE;
-            }
-            break;
-
-        case States::DONE:
-            _container.getDrive().stop();
             break;
     }
 }

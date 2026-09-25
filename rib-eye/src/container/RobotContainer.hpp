@@ -1,7 +1,7 @@
 #ifndef DEF_CONTAINER
 #define DEF_CONTAINER
 
-#include "../components/imu/Mpu.hpp"
+#include "../components/imu/Bno.hpp"
 #include "../subsystems/drive/Drive.hpp"
 
 class RobotContainer {
@@ -9,13 +9,14 @@ class RobotContainer {
         RobotContainer();
 
         void init();
+        void update();
 
         Drive& getDrive();
-        Mpu& getMpu();
+        Bno& getBno();
 
     private:
         Drive _drive;
-        Mpu _mpu;
+        Bno _bno;
 };
 
 #endif

@@ -25,9 +25,9 @@ Drive::Drive()
         Pins::Motors::rightInversion
     ),
 
-    _pidLF(100.0f,0.0f,10.0f,-255.0f,255.0f),
+    _pidLF(600.0f,0.0f,0.0f,-255.0f,255.0f),
 
-    _pidRF(100.0f,0.0f,10.0f,-255.0f,255.0f),
+    _pidRF(600.0f,0.0f,0.0f,-255.0f,255.0f),
 
     _steerPID(100.0f,0.0f,5.0f,-255.0f,255.0f),
 
@@ -72,7 +72,7 @@ bool Drive::moveToDistance() {
 
     setOpenLoop((int)leftSpeed, (int)rightSpeed);
 
-    float tolerance = 0.02f;
+    float tolerance = 0.05f;
     bool isLeftAt = fabs(_targetDistance - currentLeftDistance) < tolerance;
     bool isRightAt = fabs(_targetDistance - currentRightDistance) < tolerance;
 
