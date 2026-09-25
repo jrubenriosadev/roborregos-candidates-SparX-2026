@@ -5,17 +5,24 @@
 
 class TuningMode {
     public:
-        TuningMode(RobotContainer& container);
+        TuningMode(RobotContainer& container); // <-- OBLIGATORIO: Referencia &
+        void init();
         void run();
+
+    private:
+        RobotContainer& container;             // <-- OBLIGATORIO: Referencia &
+        float kp, ki, kd;
+        float stepDistance;
+        bool tuningFM;
+
+        bool autoStepMode;
+        bool isMoving;
+        unsigned long pauseStartTime;
+
         void processSerialCmd();
         void printTelemetry();
-    
-    private:
-        RobotContainer& container;
-        float kp, ki, kd;
-        float setpoint;
-        bool tuningFM; // FOrward mode
-
+        void triggerNextStep();
+        void printMenu();
 };
 
 #endif
