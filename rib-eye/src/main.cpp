@@ -14,13 +14,13 @@ void setup() {
     delay(1000);
 
     container.init();
-    Serial.println("[SYSTEM] Robot inicializado correctamente.");
+    Serial.println("pepelin");
 }
 
 void loop() {
     container.update();
-
     stateMachine.update();
+    //container.getDrive().setOpenLoop(80,0);
     // pidTest.run();
     // encoderTest.run();
 }

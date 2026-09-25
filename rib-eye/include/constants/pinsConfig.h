@@ -10,36 +10,23 @@ namespace Pins {
     };
 
     struct Motors {
-        static constexpr uint8_t kLeftMotorIN1 = 12;
-        static constexpr uint8_t kLeftMotorIN2 = 13;
+        static constexpr uint8_t kLeftMotorIN1 = 26;
+        static constexpr uint8_t kLeftMotorIN2 = 27;
         static constexpr uint8_t kLeftEncoderA = 19;
         static constexpr uint8_t kLeftEncoderB = 18;
-        static constexpr uint8_t kLeftPWM = 26;
-        static constexpr float kLeftPPR = 492.0f;
+        static constexpr uint8_t kLeftPWM = 25;
+        static constexpr float kLeftPPR = 490.0f;
         static constexpr bool leftInversion = false;
 
         static constexpr uint8_t kRightMotorIN1 = 33;
-        static constexpr uint8_t kRightMotorIN2 = 32;
+        static constexpr uint8_t kRightMotorIN2 = 14;
         static constexpr uint8_t kRightEncoderA = 16;
         static constexpr uint8_t kRightEncoderB = 17;
-        static constexpr uint8_t kRightPWM = 25;
-        static constexpr float kRightPPR = 495.0f;;
-        static constexpr bool rightInversion = false;
+        static constexpr uint8_t kRightPWM = 32;
+        static constexpr float kRightPPR = 490.0f;;
+        static constexpr bool rightInversion = true;
 
         static constexpr float kWheelDiameter = 0.067f;
-    };
-
-    struct Ultrasonic {
-        static constexpr uint8_t kEcho1 = 0;
-        static constexpr uint8_t kTrigger1 = 0;
-
-        static constexpr uint8_t kEcho2 = 0;
-        static constexpr uint8_t kTrigger2 = 0;
-    };
-
-    struct Mpu {
-        static constexpr uint8_t kSCL = 22;
-        static constexpr uint8_t kSDA = 21;
     };
 }
 

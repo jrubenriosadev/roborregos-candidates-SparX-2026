@@ -29,7 +29,7 @@ Drive::Drive()
 
     _pidRF(600.0f,0.0f,0.0f,-255.0f,255.0f),
 
-    _steerPID(100.0f,0.0f,5.0f,-255.0f,255.0f),
+    _steerPID(0.0f,0.0f,0.0f,-255.0f,255.0f),
 
     _targetDistance(0.0f),
     
@@ -38,7 +38,9 @@ Drive::Drive()
 
 void Drive::init() {
     _leftMotor.init();
+    Serial.println("pepito 1 on");
     _rightMotor.init();
+    Serial.println("pepito 2 on");
 
     _steerPID.setAngleWrapping(true);
 }
@@ -64,6 +66,7 @@ void Drive::setOpenLoop(int leftSpeed, int rightSpeed) {
 }
 
 bool Drive::moveToDistance() {
+    Serial.print("?");
     float currentLeftDistance = _leftMotor.getDistanceMeters();
     float currentRightDistance = _rightMotor.getDistanceMeters();
 
