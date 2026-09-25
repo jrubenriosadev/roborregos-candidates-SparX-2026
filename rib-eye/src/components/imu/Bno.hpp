@@ -6,16 +6,10 @@
 #include "Adafruit_BNO055.h"
 #include "utility/imumaths.h"
 
-enum class States {
-    UNINIT,
-    UP,
-    ERR
-}
-
 class Bno {
     public:
-        Bno(uint8_t i2c = 0x28, int32_t id = -1, unsigned long interval_ms = 20);
-        bool init();
+        Bno(uint8_t i2c = 0x28, unsigned long interval_ms = 20);
+        bool init(TwoWire &bus = Wire);
         void update();
 
         imu::Vector<3> getEuler() const;
@@ -24,22 +18,19 @@ class Bno {
 
         void getCalibration(uint8_t* sys, uint8_t* gyro, uint8_t* accel, uint8_t* mag);
 
-        States getState() const;
         bool isUp() const;
 
     private:
         Adafruit_BNO055 _bno;
         uint8_t _i2c;
-        int32_t _id;
+        bool _isInit;
 
-        States _state;
         unsigned long _lrt;
         unsigned long _interval_ms;
 
         imu::Vector<3> eData; // eu
         imu::Quaternion qData; //quat
         imu::Vector<3> aData; //accel
-}
-
+};
 
 #endif
