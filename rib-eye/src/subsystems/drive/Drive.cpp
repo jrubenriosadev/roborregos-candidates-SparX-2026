@@ -25,9 +25,9 @@ Drive::Drive()
         Pins::Motors::rightInversion
     ),
 
-    _pidLF(600.0f,10.0f,0.0f,-255.0f,255.0f),
+    _pidLF(3000.0f,0.0f,0.5f,-255.0f,255.0f),
 
-    _pidRF(600.0f,10.0f,0.0f,-255.0f,255.0f),
+    _pidRF(1800.0f,0.0f,0.5f,-255.0f,255.0f),
 
     _steerPID(0.0f,0.0f,0.0f,-255.0f,255.0f),
 
@@ -38,9 +38,7 @@ Drive::Drive()
 
 void Drive::init() {
     _leftMotor.init();
-    Serial.println("pepito 1 on");
     _rightMotor.init();
-    Serial.println("pepito 2 on");
 
     _steerPID.setAngleWrapping(true);
 }
@@ -69,12 +67,8 @@ bool Drive::moveToDistance() {
     float currentLeftDistance = _leftMotor.getDistanceMeters();
     float currentRightDistance = _rightMotor.getDistanceMeters();
 
-    float leftSpeed = _pidLF.update(currentLeftDistance, _targetDistance);
-    float rightSpeed = _pidRF.update(currentRightDistance, _targetDistance);
+    float tolerance = 0.02f;
 
-    setOpenLoop((int)leftSpeed, (int)rightSpeed);
-
-    float tolerance = 0.05f;
     bool isLeftAt = fabs(_targetDistance - currentLeftDistance) < tolerance;
     bool isRightAt = fabs(_targetDistance - currentRightDistance) < tolerance;
 
@@ -83,9 +77,13 @@ bool Drive::moveToDistance() {
         return true;
     }
 
+    float leftSpeed = _pidLF.update(currentLeftDistance, _targetDistance);
+    float rightSpeed = _pidRF.update(currentRightDistance, _targetDistance);
+
+    setOpenLoop((int)leftSpeed, (int)rightSpeed);
+
     return false;
 }
-
 void Drive::prepAngle(float deg_yawAngle) {
     _steerPID.reset();
     _targetYaw = deg_yawAngle * (M_PI / 180.0f); // To native rad

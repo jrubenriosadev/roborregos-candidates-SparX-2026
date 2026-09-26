@@ -10,20 +10,20 @@ namespace Pins {
     };
 
     struct Motors {
-        static constexpr uint8_t kLeftMotorIN1 = 26;
-        static constexpr uint8_t kLeftMotorIN2 = 27;
-        static constexpr uint8_t kLeftEncoderA = 19;
-        static constexpr uint8_t kLeftEncoderB = 18;
+        static constexpr uint8_t kLeftMotorIN1 = 2;
+        static constexpr uint8_t kLeftMotorIN2 = 4;
+        static constexpr uint8_t kLeftEncoderA = 35;
+        static constexpr uint8_t kLeftEncoderB = 34;
         static constexpr uint8_t kLeftPWM = 25;
-        static constexpr float kLeftPPR = 490.0f;
+        static constexpr float kLeftPPR = 475.0f;
         static constexpr bool leftInversion = false;
 
-        static constexpr uint8_t kRightMotorIN1 = 14;
+        static constexpr uint8_t kRightMotorIN1 = 32;
         static constexpr uint8_t kRightMotorIN2 = 33;
-        static constexpr uint8_t kRightEncoderA = 16;
-        static constexpr uint8_t kRightEncoderB = 17;
-        static constexpr uint8_t kRightPWM = 32;
-        static constexpr float kRightPPR = 490.0f;;
+        static constexpr uint8_t kRightEncoderA = 19;
+        static constexpr uint8_t kRightEncoderB = 18;
+        static constexpr uint8_t kRightPWM = 26;
+        static constexpr float kRightPPR = 475.0f;;
         static constexpr bool rightInversion = true;
 
         static constexpr float kWheelDiameter = 0.067f;

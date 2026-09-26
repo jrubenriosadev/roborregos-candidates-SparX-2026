@@ -9,6 +9,7 @@
 class Bno {
     public:
         Bno(uint8_t i2c = 0x28, unsigned long interval_ms = 20);
+
         bool init(TwoWire &bus = Wire);
         void update();
 
@@ -16,7 +17,12 @@ class Bno {
         imu::Quaternion getQuat() const;
         imu::Vector<3> getLinealAcc() const;
 
-        void getCalibration(uint8_t* sys, uint8_t* gyro, uint8_t* accel, uint8_t* mag);
+        void getCalibration(
+            uint8_t* sys,
+            uint8_t* gyro,
+            uint8_t* accel,
+            uint8_t* mag
+        );
 
         bool isUp() const;
 
@@ -29,8 +35,8 @@ class Bno {
         unsigned long _interval_ms;
 
         imu::Vector<3> eData; // eu
-        imu::Quaternion qData; //quat
-        imu::Vector<3> aData; //accel
+        imu::Quaternion qData; // quat
+        imu::Vector<3> aData; // acc
 };
 
 #endif

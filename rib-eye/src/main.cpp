@@ -16,18 +16,24 @@ void setup() {
     container.init();
 
     Serial.println("pepelin");
-
-    container.getDrive().prepDistance(0.5f);
 }
 
 
 void loop() {
-    container.getDrive().moveToDistance();
+    static unsigned long lastPrint = 0;
 
+    if(millis() - lastPrint >= 250) {
+        lastPrint = millis();
+
+        Serial.print(container.getDrive().getLeftDistance());
+        Serial.print(" | ");
+        Serial.println(container.getDrive().getRightDistance());
+    }
+    stateMachine.update();
+    container.update();
     delay(20);
-    //container.update();
-   // stateMachine.update();
-    //container.getDrive().setOpenLoop(80,0);
+    
+    //container.getDrive().setOpenLoop(80,80);
     // pidTest.run();
     // encoderTest.run();
 }
