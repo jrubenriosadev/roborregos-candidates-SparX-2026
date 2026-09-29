@@ -29,7 +29,7 @@ Drive::Drive()
 
     _pidRF(1800.0f,0.0f,0.5f,-255.0f,255.0f),
 
-    _steerPID(0.0f,0.0f,0.0f,-255.0f,255.0f),
+    _steerPID(380.0f,0.0f,1.5f,-255.0f,255.0f),
 
     _targetDistance(0.0f),
     
@@ -37,6 +37,9 @@ Drive::Drive()
     {}
 
 void Drive::init() {
+    //pinMode(Pins::Motors::kStandBy, OUTPUT);
+    //digitalWrite(Pins::Motors::kStandBy, HIGH);
+
     _leftMotor.init();
     _rightMotor.init();
 
@@ -93,11 +96,11 @@ bool Drive::turnToAngle(float current_yawDeg) {
     float current_yawRad = current_yawDeg * (M_PI / 180.0f);
     float steer = _steerPID.update(current_yawRad, _targetYaw);
     
-    setOpenLoop((int)-steer, (int)steer);
+    setOpenLoop((int)steer, (int)-steer);
 
-    float err = fabs(_steerPID.getErr() * (180.0f/ M_PI));
+    float err = fabs(_steerPID.getErr() * (180.0f / M_PI));
 
-    float tolerance = 2.0f;
+    float tolerance = 5.0f;
     if(err < tolerance) {
         stop();
         return true;

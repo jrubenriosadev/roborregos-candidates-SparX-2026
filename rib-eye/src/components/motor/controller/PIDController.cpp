@@ -29,6 +29,8 @@ float PIDController::update(float measurement, float setpoint) {
   if(lastMicros == 0) {
     lastMicros = m;
     lastMeasurement = measurement;
+    // CORRECCIÓN: Calcular el error inicial para que getErr() no devuelva 0.0f en la primera iteración
+    lastErr = _angleWrapping ? CWErr(setpoint, measurement) : (setpoint - measurement);
     return 0.0f;
   }
 

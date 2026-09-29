@@ -6,21 +6,26 @@
 enum class States {
     INIT,
     MOVE,
-    IDLE
+    PBT,
+    TURN,
+    IDLE,
+    END
 };
 
 class StateMachine {
     public:
         StateMachine(RobotContainer& container);
         void update();
+
     private:
         RobotContainer& _container;
         States _currentState;
 
         unsigned long _pst;
-        bool _isLeft;
-        float _targetAngle = 0.0f;
-        int _sideCount = 0;
+        float _targetAngle;
+        int _sideCount;
+
+        const float SIDE_DISTANCE = 0.5f;
 };
 
 #endif
