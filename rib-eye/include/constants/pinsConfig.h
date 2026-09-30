@@ -9,6 +9,12 @@ namespace Pins {
         static constexpr uint8_t LED_PIN = 0;
     };
 
+    struct LedRGB {
+        static constexpr uint8_t R_PIN = 12;
+        static constexpr uint8_t G_PIN = 13;
+        static constexpr uint8_t B_PIN = 14;
+    };
+
     struct Motors {
         static constexpr uint8_t kStandBy = 13;
 

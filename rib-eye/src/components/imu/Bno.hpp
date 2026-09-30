@@ -8,7 +8,7 @@
 
 class Bno {
     public:
-        Bno(uint8_t i2c = 0x28, unsigned long interval_ms = 20);
+        Bno(uint8_t i2c = 0x29, unsigned long interval_ms = 20);
         bool init(TwoWire &bus = Wire);
         void update();
 
