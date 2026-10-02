@@ -4,11 +4,10 @@
 #include "../container/RobotContainer.hpp"
 
 enum class States {
-    INIT,
+    WAIT_R,
+    DELAY_BS,
     MOVE,
-    PBT,
     TURN,
-    IDLE,
     END
 };
 
@@ -23,7 +22,7 @@ class StateMachine {
 
         unsigned long _pst;
         float _targetAngle;
-        int _sideCount;
+        ColorDetected _lastColor;
 
         const float SIDE_DISTANCE = 0.5f;
 };

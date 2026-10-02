@@ -48,7 +48,13 @@ void Bno::getCalibration(uint8_t* sys, uint8_t* gyro, uint8_t* accel, uint8_t* m
     }   
 }
 
-imu::Vector<3> Bno::getEuler() const { return eData; }
+imu::Vector<3> Bno::getEuler() const { 
+    imu::Vector<3> mdata = eData;
+    if(mdata.x() > 180.0f) {
+        mdata.x() -= 360.0f;
+    }
+    return mdata;
+}
 imu::Quaternion Bno::getQuat() const { return qData; }
 imu::Vector<3> Bno::getLinealAcc() const { return aData; }
 bool Bno::isUp() const { return _isInit; }
