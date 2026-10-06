@@ -8,7 +8,7 @@ Bno::Bno(uint8_t i2c, unsigned long interval_ms)
       _interval_ms(interval_ms) {}
 
 bool Bno::init(TwoWire &bus) {
-    _bno = Adafruit_BNO055(-1, 0x29, &bus);
+    _bno = Adafruit_BNO055(-1, 0x28, &bus);
 
     if (_bno.begin(OPERATION_MODE_IMUPLUS)) {
         delay(100);
@@ -18,7 +18,7 @@ bool Bno::init(TwoWire &bus) {
 
     delay(200);
 
-    uint8_t alt_i2c = 0x29;
+    uint8_t alt_i2c = 0x28;
     _bno = Adafruit_BNO055(-1, alt_i2c, &bus);
     
     if (_bno.begin(OPERATION_MODE_IMUPLUS)) {
