@@ -25,7 +25,7 @@ Drive::Drive()
         Pins::Motors::rightInversion
     ),
 
-    _pidLF(3000.0f,0.0f,0.5f,-255.0f,255.0f),
+    _pidLF(2200.0f,0.0f,0.5f,-255.0f,255.0f),
 
     _pidRF(1800.0f,0.0f,0.5f,-255.0f,255.0f),
 
