@@ -5,6 +5,7 @@
 #include "../subsystems/drive/Drive.hpp"
 #include "../components/color-sensor/ColorSensor.h"
 #include "../components/led-rgb/ledRGB.hpp"
+#include "../components/ultrasonic/Ultrasonic.h"
 #include "../include/constants/pinsConfig.h"
 
 enum class ColorDetected {
@@ -29,6 +30,12 @@ class RobotContainer {
         LedRGB& getLed();
         ColorSensor& getColorSensor();
 
+        Ultrasonic& getLeftUlt();
+        Ultrasonic& getRightUlt();
+
+        float getLeftDistance() const;
+        float getRightDistance() const;
+
         ColorDetected getColorDetected();
 
     private:
@@ -37,6 +44,12 @@ class RobotContainer {
         LedRGB _led;
         ColorSensor _tcs;
         ColorDetected _lastColor;
+        Ultrasonic _leftUltra, _rightUltra;
+
+        float _distLeft;
+        float _distRight;
+        unsigned long _lastUltraToggle;
+        bool _readToggle;
 };
 
 #endif

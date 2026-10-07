@@ -27,38 +27,78 @@ bool inRange(const RGB& current, const RGB& target, float t) {
 
 RobotContainer::RobotContainer() 
     : _led(Pins::LedRGB::R_PIN, Pins::LedRGB::G_PIN, Pins::LedRGB::B_PIN),
-      _lastColor(ColorDetected::NONE) {}
+      _lastColor(ColorDetected::NONE),
+      _leftUltra(35, 14),
+      _rightUltra(34, 12),
+      _distLeft(50.0f),
+      _distRight(50.0f),
+      _lastUltraToggle(0),
+      _readToggle(false) {}
 
 void RobotContainer::init() {
+    /*
     Serial.println(" === init === ");
-    _led.init();
+    //_led.init();
 
     if (_bno.init(Wire)) {
         Serial.println("BNO055 :)");
+
+        uint8_t sys = 0, gyro = 0, accel = 0, mag = 0;
+        Serial.print("Estabilizando BNO055");
+        unsigned long startTime = millis();
+        
+        while (gyro < 2 && (millis() - startTime < 3000)) {
+            _bno.getCalibration(&sys, &gyro, &accel, &mag);
+            Serial.print(".");
+            delay(200);
+        }
+        Serial.println();
+
+        _bno.resetHeading();
+        Serial.println("BNO055 Heading Reseted");
     } else {
         Serial.println("BNO055 :[");
-    }
+    }*/
 
+    /*
     if(_tcs.init()) {
         _tcs.setLed(true);
         Serial.println("TCS :)");
     } else {
         Serial.println("TCS :[");
-    }
+    }*/
+
+   _leftUltra.init();
+   _rightUltra.init();
 
     _drive.init();
     Serial.println("Drive :)");
 }
 
 void RobotContainer::update() {
-    _bno.update();
-    _led.update();
+    //_bno.update();
+    //_led.update();
+    unsigned long c = millis();
+    if(c - _lastUltraToggle >= 40) {
+        _lastUltraToggle = c;
+        if(_readToggle) {
+            _distLeft = _leftUltra.readDistance();
+        } else {
+            _distRight = _rightUltra.readDistance();
+        }
+        _readToggle = !_readToggle;
+    }
 }
 
 Drive& RobotContainer::getDrive() { return _drive; }
 Bno& RobotContainer::getBno() { return _bno; }
 LedRGB& RobotContainer::getLed() { return _led; }
 ColorSensor& RobotContainer::getColorSensor() { return _tcs; }
+Ultrasonic& RobotContainer::getLeftUlt() { return _leftUltra; }
+Ultrasonic& RobotContainer::getRightUlt() { return _rightUltra; }
+
+float RobotContainer::getLeftDistance() const { return _distLeft; }
+float RobotContainer::getRightDistance() const { return _distRight; }
 
 ColorDetected RobotContainer::getColorDetected() {
     RGB c;

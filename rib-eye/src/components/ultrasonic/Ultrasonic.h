@@ -5,16 +5,18 @@
 
 class Ultrasonic {
     public:
-        Ultrasonic(uint8_t echoPin, uint8_t triggerPin);
+        Ultrasonic(uint8_t echoPin, uint8_t triggerPin, float maxDistanceCm = 50.0f);
         void init();
         float readDistance();
+        bool readAsync(float &outDistance, unsigned long intervalMs = 40);
 
-        bool readAsync(float &outDistnace, unsigned long intervalMs = 100);
     private:
         const uint8_t echoPin;
         const uint8_t triggerPin;
         float lastDistance;
         unsigned long lastReadTime;
+        unsigned long maxTimeoutUs;
+        float maxDistanceCm;
 };
 
 #endif

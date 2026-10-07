@@ -1,7 +1,13 @@
 #include "Ultrasonic.h"
 
-Ultrasonic::Ultrasonic(uint8_t echoPin, uint8_t triggerPin)
-    : echoPin(echoPin), triggerPin(triggerPin), lastDistance(-1.0f), lastReadTime(0) {}
+Ultrasonic::Ultrasonic(uint8_t echoPin, uint8_t triggerPin, float maxDistanceCm)
+    : echoPin(echoPin), 
+      triggerPin(triggerPin), 
+      lastDistance(maxDistanceCm), 
+      lastReadTime(0),
+      maxDistanceCm(maxDistanceCm) {
+    maxTimeoutUs = (unsigned long)(maxDistanceCm * 2.0f / 0.0343f);
+}
 
 void Ultrasonic::init() {
     pinMode(triggerPin, OUTPUT);
@@ -11,16 +17,15 @@ void Ultrasonic::init() {
 
 float Ultrasonic::readDistance() {
     digitalWrite(triggerPin, LOW);
-    delayMicroseconds(4);
-    
+    delayMicroseconds(2);
     digitalWrite(triggerPin, HIGH);
     delayMicroseconds(10);
     digitalWrite(triggerPin, LOW);
 
-    unsigned long duration = pulseIn(echoPin, HIGH, 15000);
+    unsigned long duration = pulseIn(echoPin, HIGH, maxTimeoutUs);
 
     if (duration == 0 || duration < 116) { 
-        lastDistance = -1.0f;
+        lastDistance = maxDistanceCm;
     } else {
         lastDistance = (duration * 0.0343f) / 2.0f;
     }

@@ -21,6 +21,9 @@ class Drive {
         void prepAngle(float deg_yawAngle);
         bool turnToAngle(float current_yawDeg);
 
+        void prepMoveSraight(float m_distance, float deg_yawAngle);
+        bool moveStraight(float currentYaw);
+
         void setLeftForwardGains(float kp, float ki, float kd);
         void setRightForwardGains(float kp, float ki, float kd);
         void setSteerGains(float kp, float ki, float kd);

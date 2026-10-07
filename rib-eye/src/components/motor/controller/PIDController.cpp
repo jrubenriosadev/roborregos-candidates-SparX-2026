@@ -29,7 +29,7 @@ float PIDController::update(float measurement, float setpoint) {
   if(lastMicros == 0) {
     lastMicros = m;
     lastMeasurement = measurement;
-    // CORRECCIÓN: Calcular el error inicial para que getErr() no devuelva 0.0f en la primera iteración
+    // fet: calcula el error inicial para que getErr() no devuelva 0.0f en la primera iteracion
     lastErr = _angleWrapping ? CWErr(setpoint, measurement) : (setpoint - measurement);
     return 0.0f;
   }
@@ -54,10 +54,13 @@ float PIDController::update(float measurement, float setpoint, float dt) {
   float maxI = (_ki > 0.0f) ? (_maxOutput / _ki) : 0.0f;
   integral_pp = constrain(integral_pp, -maxI, maxI);
   float iT = _ki * integral_pp;
-
-  float d = (measurement - lastMeasurement) / dt;
-  float dT = -_kd * d;
-  lastMeasurement = measurement;
+  
+  float dT = 0.0f;
+  if (fabsf(measurement - lastMeasurement) > 1e-5f) {
+      float d = (measurement - lastMeasurement) / dt;
+      dT = -_kd * d;
+      lastMeasurement = measurement;
+  }
 
   lastOutput = constrain(pT + iT + dT, _minOuput, _maxOutput);
   return lastOutput;

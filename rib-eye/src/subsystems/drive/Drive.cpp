@@ -89,6 +89,7 @@ bool Drive::moveToDistance() {
 }
 void Drive::prepAngle(float deg_yawAngle) {
     _steerPID.reset();
+    _steerPID.setGains(550.0f, 0.0f, 1.5f);
     _targetYaw = deg_yawAngle * (M_PI / 180.0f); // To native rad
 }
 
@@ -105,6 +106,40 @@ bool Drive::turnToAngle(float current_yawDeg) {
         stop();
         return true;
     }
+    return false;
+}
+
+void Drive::prepMoveSraight(float m_distance, float deg_yawAngle) {
+    _leftMotor.resetEncoder();
+    _rightMotor.resetEncoder();
+
+    _pidLF.reset();
+    _pidRF.reset();
+
+    _targetDistance = m_distance;
+    _targetYaw = deg_yawAngle * (M_PI / 180.0f); // RAD 
+}
+
+bool Drive::moveStraight(float currentYaw) {
+    float currentLeftDistance = _leftMotor.getDistanceMeters();
+    float currentRightDistance = _rightMotor.getDistanceMeters();
+
+    float avg = (currentLeftDistance + currentRightDistance) / 2.0f;
+
+    if (avg >= _targetDistance) {
+        stop();
+        return true;
+    }
+
+    float iSpeed = _pidLF.update(avg, _targetDistance);
+
+    float currentYawRad = currentYaw * (M_PI / 180.0f);
+    float steeringC = _steerPID.update(currentYawRad, _targetYaw);
+
+    float leftSpeed = iSpeed + steeringC;
+    float rightSpeed = iSpeed - steeringC;
+
+    setOpenLoop((int)leftSpeed, (int)rightSpeed);
     return false;
 }
 

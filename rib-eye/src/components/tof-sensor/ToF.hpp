@@ -7,8 +7,7 @@
 
 enum class States {
     UNINIT,
-    INIT_MEASUREMENT,
-    AWAIT_DATA,
+    MEASURING,
     UP,
     ERR
 };
@@ -16,6 +15,7 @@ enum class States {
 class ToF {
     public:
         ToF(uint8_t xShutPin, uint8_t i2c);
+        void powerOff();
         bool init(TwoWire &bus = Wire);
         void update();
 
