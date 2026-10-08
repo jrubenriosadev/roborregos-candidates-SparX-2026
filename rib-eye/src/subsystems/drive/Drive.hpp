@@ -21,6 +21,10 @@ class Drive {
         bool moveTile(float currentYaw, float distLeft, float distRight, float baseSpeed = 140.0f);
 
         void setSteerGains(float kp, float ki, float kd);
+
+        long getLeftEncoder() const;
+        long getRightEncoder() const;
+
         float getLeftDistance() const;
         float getRightDistance() const;
 

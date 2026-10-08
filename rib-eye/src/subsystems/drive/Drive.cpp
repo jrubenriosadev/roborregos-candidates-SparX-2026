@@ -64,10 +64,8 @@ bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float ba
 
     float currentLeftDist = _leftMotor.getDistanceMeters();
     float currentRightDist = _rightMotor.getDistanceMeters();
-    
-    float avgDist = fabsf(currentLeftDist - currentRightDist) > 0.10f ? 
-                    fmaxf(currentLeftDist, currentRightDist) : 
-                    (currentLeftDist + currentRightDist) / 2.0f;
+
+    float avgDist = (currentLeftDist + currentRightDist) / 2.0f;
 
     float remainingDist = _targetDistance - avgDist;
 
@@ -77,45 +75,55 @@ bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float ba
     }
 
     float currentSpeed = baseSpeed;
+
     if (remainingDist < 0.15f) {
         float factor = remainingDist / 0.15f;
         currentSpeed = baseSpeed * factor;
+
         if (currentSpeed < 65.0f) {
             currentSpeed = 65.0f;
         }
     }
 
-    float encoderError = currentLeftDist - currentRightDist; 
+    float encoderError = currentLeftDist - currentRightDist;
     float encoderSteer = -2500.0f * encoderError;
 
     float currentYawRad = currentYaw * (M_PI / 180.0f);
     float imuSteer = -_steerPID.update(currentYawRad, _targetYaw);
 
-    float wallSteer = 0.0f;
-    const float MAX_WALL_DIST = 10.0f;
-    const float TARGET_WALL_DIST = 6.5f;
+    float totalSteer =
+        (encoderSteer * 0.5f) +
+        (imuSteer * 0.5f);
 
-    bool leftValid  = (distLeft > 0.0f && distLeft <= MAX_WALL_DIST);
-    bool rightValid = (distRight > 0.0f && distRight <= MAX_WALL_DIST);
+    int leftSpeed = constrain(
+        (int)(currentSpeed + totalSteer),
+        -255,
+        255
+    );
 
-    if (leftValid && rightValid) {
-        float wallError = (distLeft - distRight); 
-        wallSteer = _wallPID.update(wallError, 0.0f);
-    } else if (leftValid) {
-        float wallError = (distLeft - TARGET_WALL_DIST);
-        wallSteer = _wallPID.update(wallError, 0.0f);
-    } else if (rightValid) {
-        float wallError = (TARGET_WALL_DIST - distRight);
-        wallSteer = _wallPID.update(wallError, 0.0f);
-    } else {
-        _wallPID.reset();
-    }
-
-    float totalSteer = (encoderSteer * 0.7f) + (imuSteer * 0.1f) + (wallSteer * 0.2f);
-
-    int leftSpeed  = constrain((int)(currentSpeed + totalSteer), -255, 255);
-    int rightSpeed = constrain((int)(currentSpeed - totalSteer), -255, 255);
+    int rightSpeed = constrain(
+        (int)(currentSpeed - totalSteer),
+        -255,
+        255
+    );
 
     setOpenLoop(leftSpeed, rightSpeed);
+
     return false;
+}
+
+long Drive::getLeftEncoder() const {
+    return _leftMotor.getEncoder();
+}
+
+long Drive::getRightEncoder() const {
+    return _rightMotor.getEncoder();
+}
+
+float Drive::getLeftDistance() const {
+    return _leftMotor.getDistanceMeters();
+}
+
+float Drive::getRightDistance() const {
+    return _rightMotor.getDistanceMeters();
 }
