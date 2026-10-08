@@ -5,7 +5,7 @@
 #include "Wire.h"
 #include "Adafruit_VL53L0X.h"
 
-enum class States {
+enum class ToFStates {
     UNINIT,
     MEASURING,
     UP,
@@ -21,7 +21,7 @@ class ToF {
 
         uint16_t getDistance() const;
         bool isUp() const;
-        States getState() const;
+        ToFStates getState() const;
 
     private:
         Adafruit_VL53L0X _lox;
@@ -29,7 +29,7 @@ class ToF {
         uint8_t _i2c;
         TwoWire* _wireBus;
 
-        States _state;
+        ToFStates _state;
         uint16_t _currentDistanceMm;
         unsigned long _lastMT;
         unsigned long _timeout_ms;

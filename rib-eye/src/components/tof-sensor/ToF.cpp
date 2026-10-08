@@ -5,7 +5,7 @@ ToF::ToF(uint8_t xShutPin, uint8_t i2c)
       _xShutPin(xShutPin),
       _i2c(i2c),
       _wireBus(nullptr),
-      _state(States::UNINIT),
+      _state(ToFStates::UNINIT),
       _currentDistanceMm(1000),
       _lastMT(0),
       _timeout_ms(150) {}
@@ -13,7 +13,7 @@ ToF::ToF(uint8_t xShutPin, uint8_t i2c)
 void ToF::powerOff() {
     pinMode(_xShutPin, OUTPUT);
     digitalWrite(_xShutPin, LOW);
-    _state = States::UNINIT;
+    _state = ToFStates::UNINIT;
 }
 
 bool ToF::init(TwoWire &bus) {
@@ -24,18 +24,18 @@ bool ToF::init(TwoWire &bus) {
     delay(10);
 
     if (!_lox.begin(_i2c, false, _wireBus)) {
-        _state = States::ERR;
+        _state = ToFStates::ERR;
         return false;
     }
 
     _lox.startRangeContinuous();
-    _state = States::MEASURING;
+    _state = ToFStates::MEASURING;
     _lastMT = millis();
     return true;
 }
 
 void ToF::update() {
-    if (_state == States::ERR || _state == States::UNINIT) return;
+    if (_state == ToFStates::ERR || _state == ToFStates::UNINIT) return;
 
     if (_lox.isRangeComplete()) {
         uint16_t dist = _lox.readRangeResult();
@@ -46,13 +46,13 @@ void ToF::update() {
             _currentDistanceMm = dist;
         }
         
-        _state = States::UP;
+        _state = ToFStates::UP;
         _lastMT = millis();
     } else if (millis() - _lastMT > _timeout_ms) {
         _lox.stopRangeContinuous();
         _lox.startRangeContinuous();
         _lastMT = millis();
-        _state = States::MEASURING;
+        _state = ToFStates::MEASURING;
     }
 }
 
@@ -61,9 +61,9 @@ uint16_t ToF::getDistance() const {
 }
 
 bool ToF::isUp() const {
-    return _state == States::UP;
+    return _state == ToFStates::UP;
 }
 
-States ToF::getState() const {
+ToFStates ToF::getState() const {
     return _state;
 }

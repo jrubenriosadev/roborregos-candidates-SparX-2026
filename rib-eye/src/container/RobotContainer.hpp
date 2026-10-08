@@ -27,7 +27,6 @@ class RobotContainer {
 
         Drive& getDrive();
         Bno& getBno();
-        LedRGB& getLed();
         ColorSensor& getColorSensor();
 
         Ultrasonic& getLeftUlt();
@@ -37,14 +36,15 @@ class RobotContainer {
         float getRightDistance() const;
 
         ColorDetected getColorDetected();
+        RGB getLastRGB() const;
 
     private:
         Drive _drive;
         Bno _bno;
-        LedRGB _led;
         ColorSensor _tcs;
         ColorDetected _lastColor;
         Ultrasonic _leftUltra, _rightUltra;
+        RGB _lastRGB;
 
         float _distLeft;
         float _distRight;

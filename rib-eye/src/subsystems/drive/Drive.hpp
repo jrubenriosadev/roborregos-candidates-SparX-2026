@@ -11,32 +11,23 @@ class Drive {
         Drive();
 
         void init();
-
         void setOpenLoop(int leftSpeed, int rightSpeed);
         void stop();
-
-        void prepDistance(float m_distance);
-        bool moveToDistance();
 
         void prepAngle(float deg_yawAngle);
         bool turnToAngle(float current_yawDeg);
 
-        void prepMoveSraight(float m_distance, float deg_yawAngle);
-        bool moveStraight(float currentYaw);
+        void prepMoveTile(float targetDistanceMeters, float targetYawDeg);
+        bool moveTile(float currentYaw, float distLeft, float distRight, float baseSpeed = 140.0f);
 
-        void setLeftForwardGains(float kp, float ki, float kd);
-        void setRightForwardGains(float kp, float ki, float kd);
         void setSteerGains(float kp, float ki, float kd);
         float getLeftDistance() const;
         float getRightDistance() const;
 
-        long getLeftTicks() const;
-        long getRightTicks() const;
-    
     private:
         Motor _leftMotor, _rightMotor;
-        PIDController _pidLF, _pidRF, _steerPID;
-        float _targetDistance, _targetYaw;
+        PIDController _pidLF, _pidRF, _steerPID, _wallPID;
+        float _targetYaw, _targetDistance;
 };
 
 #endif

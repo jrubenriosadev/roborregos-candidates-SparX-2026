@@ -52,7 +52,8 @@ void Motor::init() {
         if(instances[i] == nullptr) {
             _slotIndex = i;
             instances[i] = this;
-            attachInterrupt(digitalPinToInterrupt(_pinEncoderA), isrTable[i], RISING);
+            attachInterrupt(digitalPinToInterrupt(_pinEncoderA), isrTable[i], CHANGE);
+            attachInterrupt(digitalPinToInterrupt(_pinEncoderB), isrTable[i], CHANGE);
             break;
         }
     }
