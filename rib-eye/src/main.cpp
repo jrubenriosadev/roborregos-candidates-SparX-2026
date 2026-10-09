@@ -25,6 +25,8 @@ void loop() {
 
     Drive& drive = container.getDrive();
 
+    drive.setOpenLoop(110,120);
+
     if (millis() - lastPrint >= 250) {
         lastPrint = millis();
         Serial.print("L: ");

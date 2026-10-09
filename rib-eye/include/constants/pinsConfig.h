@@ -16,12 +16,10 @@ namespace Pins {
     };
 
     struct Motors {
-        static constexpr uint8_t kStandBy = 13;
-
-        static constexpr uint8_t kLeftMotorIN1 = 26; // 27
-        static constexpr uint8_t kLeftMotorIN2 = 27; // 26
-        static constexpr uint8_t kLeftEncoderA = 16; // 17
-        static constexpr uint8_t kLeftEncoderB = 17; // 16
+        static constexpr uint8_t kLeftMotorIN1 = 27; // 27
+        static constexpr uint8_t kLeftMotorIN2 = 26; // 26
+        static constexpr uint8_t kLeftEncoderA = 17; // 17
+        static constexpr uint8_t kLeftEncoderB = 16; // 16
         static constexpr uint8_t kLeftPWM = 25;
         static constexpr float kLeftPPR = 480.0f;
         static constexpr bool leftInversion = false;

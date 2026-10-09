@@ -20,9 +20,6 @@ Drive::Drive()
       _targetDistance(0.30f) {}
 
 void Drive::init() {
-    pinMode(Pins::Motors::kStandBy, OUTPUT);
-    digitalWrite(Pins::Motors::kStandBy, HIGH);
-
     _leftMotor.init();
     _rightMotor.init();
     _steerPID.setAngleWrapping(true);
