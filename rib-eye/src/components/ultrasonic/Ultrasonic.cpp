@@ -6,7 +6,7 @@ Ultrasonic::Ultrasonic(uint8_t echoPin, uint8_t triggerPin, float maxDistanceCm)
       lastDistance(maxDistanceCm), 
       lastReadTime(0),
       maxDistanceCm(maxDistanceCm) {
-    maxTimeoutUs = (unsigned long)(maxDistanceCm * 2.0f / 0.0343f);
+    maxTimeoutUs = (unsigned long)(maxDistanceCm * 2.0f / 0.0343f) + 3000UL;
 }
 
 void Ultrasonic::init() {

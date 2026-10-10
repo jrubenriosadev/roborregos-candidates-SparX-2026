@@ -56,7 +56,7 @@ void RobotContainer::update() {
             float d = _leftUltra.readDistance();
             _leftFilter.push(d, _leftUltra.isValid());
         } else {
-            float d = _leftUltra.readDistance();
+            float d = _rightUltra.readDistance();
             _rightFilter.push(d, _rightUltra.isValid());
         }
         _readToggle = !_readToggle;

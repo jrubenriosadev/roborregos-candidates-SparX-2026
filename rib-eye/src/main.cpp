@@ -1,6 +1,8 @@
 #include <Arduino.h>
-
 #include "container/RobotContainer.hpp"
+#include "BluetoothSerial.h"
+
+BluetoothSerial bluetooth;
 
 RobotContainer container;
 
@@ -10,7 +12,7 @@ unsigned long lastPrint = 0;
 
 void setup() {
     Serial.begin(115200);
-
+    bluetooth.begin("RIBEYE");
     while (!Serial && millis() < 3000);
 
     Wire.begin(21, 22);
@@ -21,6 +23,7 @@ void setup() {
 
     nextTick = micros();
 }
+
 void loop() {
     const unsigned long now = micros();
     if((long)(now-nextTick) < 0) return;
@@ -29,20 +32,25 @@ void loop() {
 
     container.update();
 
-    Drive& drive = container.getDrive();
-
-    drive.setOpenLoop(110,120);
-
     if (millis() - lastPrint >= 250) {
         lastPrint = millis();
-        Serial.print("L: ");
-        Serial.print(drive.getLeftEncoder());
-        Serial.print(" | R: ");
-        Serial.print(drive.getRightEncoder());
-        Serial.print(" | DL: ");
-        Serial.print(drive.getLeftDistance(), 4);
-        Serial.print(" m | DR: ");
-        Serial.print(drive.getRightDistance(), 4);
-        Serial.println(" m");
+
+        float leftDist = container.getLeftDistance();
+        float rightDist = container.getRightDistance();
+
+        bool leftValid = container.getLeftUlt().isValid();
+        bool rightValid = container.getRightUlt().isValid();
+
+        char buffer[120];
+        snprintf(buffer, sizeof(buffer),
+            "L: %6.2f cm [%s] | R: %6.2f cm [%s]",
+            leftDist,
+            leftValid ? "OK" : "INVALID",
+            rightDist,
+            rightValid ? "OK" : "INVALID"
+        );
+
+        Serial.println(buffer);
+        bluetooth.println(buffer);
     }
 }

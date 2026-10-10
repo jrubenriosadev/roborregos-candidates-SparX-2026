@@ -19,8 +19,8 @@ namespace Pins {
         static constexpr uint8_t kLeftEcho = 35;
         static constexpr uint8_t kLeftTrigger = 14;
 
-        static constexpr uint8_t kRightEcho = 35;
-        static constexpr uint8_t kRightTrigger = 14;
+        static constexpr uint8_t kRightEcho = 34;
+        static constexpr uint8_t kRightTrigger = 12;
         
         static constexpr float maxRange = 15.0f;
     };
