@@ -18,7 +18,7 @@ class ColorSensor {
 
         bool readAsync(RGB &color, unsigned long intervalMS = 100);
     private:
-        bool readRegisters(uint16_t &c, uint16_t %r, uint16_t &g, uint16_t &b);
+        bool readRegisters(uint16_t &c, uint16_t &r, uint16_t &g, uint16_t &b);
         Adafruit_TCS34725 tcs;
         bool isInit;
         unsigned long lastReadTime;

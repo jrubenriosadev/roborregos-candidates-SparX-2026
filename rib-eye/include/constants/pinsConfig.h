@@ -23,7 +23,7 @@ namespace Pins {
         static constexpr uint8_t kRightTrigger = 14;
         
         static constexpr float maxRange = 15.0f;
-    }
+    };
 
     struct Motors {
         static constexpr uint8_t kLeftMotorIN1 = 27; // 27

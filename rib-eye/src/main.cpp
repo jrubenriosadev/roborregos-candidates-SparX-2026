@@ -4,10 +4,11 @@
 
 RobotContainer container;
 
+constexpr unsigned long kControlPeriod = 20000UL;
+unsigned long nextTick = 0;
 unsigned long lastPrint = 0;
 
 void setup() {
-
     Serial.begin(115200);
 
     while (!Serial && millis() < 3000);
@@ -16,10 +17,15 @@ void setup() {
     Wire.setClock(100000);
 
     container.init();
-
     container.getDrive().stop();
+
+    nextTick = micros();
 }
 void loop() {
+    const unsigned long now = micros();
+    if((long)(now-nextTick) < 0) return;
+    nextTick += kControlPeriod;
+    if((long)(now-nextTick) > (long)kControlPeriod) nextTick = now + kControlPeriod;
 
     container.update();
 
@@ -39,6 +45,4 @@ void loop() {
         Serial.print(drive.getRightDistance(), 4);
         Serial.println(" m");
     }
-
-    delay(20);
 }

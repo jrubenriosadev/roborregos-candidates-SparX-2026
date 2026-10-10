@@ -27,10 +27,8 @@ bool inRange(const RGB& current, const RGB& target, float t) {
 RobotContainer::RobotContainer() 
     : _lastColor(ColorDetected::NONE),
       _lastRGB{0.0f, 0.0f, 0.0f},
-      _leftUltra(35, 14, 10.0f),
-      _rightUltra(34, 12, 10.0f),
-      _distLeft(10.0f),
-      _distRight(10.0f),
+      _leftUltra(Pins::Ultrasonic::kLeftEcho, Pins::Ultrasonic::kLeftTrigger, Pins::Ultrasonic::maxRange),
+      _rightUltra(Pins::Ultrasonic::kRightEcho, Pins::Ultrasonic::kRightTrigger, Pins::Ultrasonic::maxRange),
       _lastUltraToggle(0),
       _readToggle(false) {}
 
@@ -55,9 +53,11 @@ void RobotContainer::update() {
     if (c - _lastUltraToggle >= 40) {
         _lastUltraToggle = c;
         if (_readToggle) {
-            _distLeft = _leftUltra.readDistance();
+            float d = _leftUltra.readDistance();
+            _leftFilter.push(d, _leftUltra.isValid());
         } else {
-            _distRight = _rightUltra.readDistance();
+            float d = _leftUltra.readDistance();
+            _rightFilter.push(d, _rightUltra.isValid());
         }
         _readToggle = !_readToggle;
     }
@@ -69,8 +69,8 @@ ColorSensor& RobotContainer::getColorSensor() { return _tcs; }
 Ultrasonic& RobotContainer::getLeftUlt() { return _leftUltra; }
 Ultrasonic& RobotContainer::getRightUlt() { return _rightUltra; }
 
-float RobotContainer::getLeftDistance() const { return _distLeft; }
-float RobotContainer::getRightDistance() const { return _distRight; }
+float RobotContainer::getLeftDistance() const { return _leftFilter.valid() ? _leftFilter.value() : Pins::Ultrasonic::maxRange; }
+float RobotContainer::getRightDistance() const { return _rightFilter.valid() ? _rightFilter.value() : Pins::Ultrasonic::maxRange; }
 
 ColorDetected RobotContainer::getColorDetected() {
     RGB c;

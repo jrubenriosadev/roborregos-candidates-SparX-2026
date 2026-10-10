@@ -25,8 +25,10 @@ float Ultrasonic::readDistance() {
     unsigned long duration = pulseIn(echoPin, HIGH, maxTimeoutUs);
 
     if (duration == 0 || duration < 116) { 
+        valid = false;
         lastDistance = maxDistanceCm;
     } else {
+        valid = true;
         lastDistance = (duration * 0.0343f) / 2.0f;
     }
 

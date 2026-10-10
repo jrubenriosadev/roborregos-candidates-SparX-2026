@@ -9,8 +9,10 @@ class Ultrasonic {
         void init();
         float readDistance();
         bool readAsync(float &outDistance, unsigned long intervalMs = 40);
+        bool isValid() const { return valid; }
 
     private:
+        bool valid = false;
         const uint8_t echoPin;
         const uint8_t triggerPin;
         float lastDistance;

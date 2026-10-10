@@ -6,6 +6,7 @@
 #include "../components/color-sensor/ColorSensor.h"
 #include "../components/led-rgb/ledRGB.hpp"
 #include "../components/ultrasonic/Ultrasonic.h"
+#include "../components/ultrasonic/WallFilter.hpp"
 #include "../include/constants/pinsConfig.h"
 
 enum class ColorDetected {
@@ -34,6 +35,8 @@ class RobotContainer {
 
         float getLeftDistance() const;
         float getRightDistance() const;
+        WallFilter getLeftWall() const;
+        WallFilter getRightWall() const;
 
         ColorDetected getColorDetected();
         RGB getLastRGB() const;
@@ -46,8 +49,7 @@ class RobotContainer {
         Ultrasonic _leftUltra, _rightUltra;
         RGB _lastRGB;
 
-        float _distLeft;
-        float _distRight;
+        WallFilter _leftFilter, _rightFilter;
         unsigned long _lastUltraToggle;
         bool _readToggle;
 };

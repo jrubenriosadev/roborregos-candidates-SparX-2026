@@ -27,7 +27,7 @@ bool ColorSensor::readAsync(RGB &color, unsigned long intervalMS) {
     if(currentMillis - lastReadTime >= intervalMS) {
         lastReadTime = currentMillis;
 
-        uint16_t c, r, g, b:
+        uint16_t c, r, g, b;
         // literalmente lo mismo que el getRGB (normalizazion)
         if(readRegisters(c, r, g, b) && c > 0) {
             lastRGB.r = (float)r / c * 255.0f;
@@ -46,7 +46,7 @@ bool ColorSensor::readAsync(RGB &color, unsigned long intervalMS) {
 
 // Optimizacion para los registros (para que pese menos)
 // Sacado de la datasheet del sensor
-bool ColorSensor::readRegisters(uint16_t &c, uint16_t %r, uint16_t &g, uint16_t &b) {
+bool ColorSensor::readRegisters(uint16_t &c, uint16_t &r, uint16_t &g, uint16_t &b) {
     constexpr uint8_t i2c = 0x29;
     constexpr uint8_t kCmdAutoInc = 0x80 | 0x20; // bit y autoincremento
     constexpr uint8_t kRegCDataL = 0x14; // 2 bytes, LSB primero
