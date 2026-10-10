@@ -10,10 +10,20 @@ namespace Pins {
     };
 
     struct LedRGB {
-        static constexpr uint8_t R_PIN = 12;
-        static constexpr uint8_t G_PIN = 13;
-        static constexpr uint8_t B_PIN = 14;
+        static constexpr uint8_t R_PIN = 0;
+        static constexpr uint8_t G_PIN = 0;
+        static constexpr uint8_t B_PIN = 0;
     };
+
+    struct Ultrasonic {
+        static constexpr uint8_t kLeftEcho = 35;
+        static constexpr uint8_t kLeftTrigger = 14;
+
+        static constexpr uint8_t kRightEcho = 35;
+        static constexpr uint8_t kRightTrigger = 14;
+        
+        static constexpr float maxRange = 15.0f;
+    }
 
     struct Motors {
         static constexpr uint8_t kLeftMotorIN1 = 27; // 27
@@ -26,9 +36,9 @@ namespace Pins {
 
         static constexpr uint8_t kRightMotorIN1 = 2; // 2
         static constexpr uint8_t kRightMotorIN2 = 15; // 15
-        static constexpr uint8_t kRightEncoderA = 19; // 
-        static constexpr uint8_t kRightEncoderB = 18; // 
-        static constexpr uint8_t kRightPWM = 33; // 
+        static constexpr uint8_t kRightEncoderA = 19; // 19
+        static constexpr uint8_t kRightEncoderB = 18; // 18
+        static constexpr uint8_t kRightPWM = 33;
         static constexpr float kRightPPR = 480.0f;;
         static constexpr bool rightInversion = true;
 
