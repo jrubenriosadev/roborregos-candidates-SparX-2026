@@ -21,6 +21,8 @@ class Bno {
         void getCalibration(uint8_t* sys, uint8_t* gyro, uint8_t* accel, uint8_t* mag);
 
         bool isUp() const;
+        bool isCalibrated();
+        void enableExtras(bool on) { _readExtras = on; }
 
         void resetHeading();
         float getRelativeYaw() const;
@@ -38,6 +40,7 @@ class Bno {
         imu::Vector<3> aData; //accel
 
         float _headingOffset;
+        bool _readExtras = false;
 };
 
 #endif

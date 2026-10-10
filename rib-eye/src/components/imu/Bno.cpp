@@ -9,7 +9,7 @@ Bno::Bno(uint8_t i2c, unsigned long interval_ms)
       _headingOffset(0.0f) {}
 
 bool Bno::init(TwoWire &bus) {
-    _bno = Adafruit_BNO055(-1, 0x28, &bus);
+    _bno = Adafruit_BNO055(-1, _i2c, &bus);
 
     if (_bno.begin(OPERATION_MODE_IMUPLUS)) {
         delay(100);
@@ -29,8 +29,10 @@ void Bno::update() {
     if(millis() - _lrt >= _interval_ms) {
         _lrt = millis();
         eData = _bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-        qData = _bno.getQuat();
-        aData = _bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+        if(_readExtras) {
+            qData = _bno.getQuat();
+            aData = _bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+        }
     }
 }
 
@@ -62,7 +64,17 @@ imu::Quaternion Bno::getQuat() const { return qData; }
 imu::Vector<3> Bno::getLinealAcc() const { return aData; }
 bool Bno::isUp() const { return _isInit; }
 
+bool Bno::isCalibrated() {
+    if(!_isInit) return false;
+    uint8_t sys, gyro, accel, mag;
+    _bno.getCalibration(&sys, &gyro, &accel, &mag);
+    return gyro == 3;
+}
+
 void Bno::resetHeading() {
+    if(!_isInit) return;
+    eData = _bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+    _lrt = millis();
     _headingOffset = getEuler().x();
 }
 
