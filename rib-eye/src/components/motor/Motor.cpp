@@ -164,7 +164,7 @@ float Motor::updateVelocity() {
 
 float Motor::getRPM() const { return current_rpm; }
 float Motor::getRadSec() const { return current_radps; }
-float Motor::getSpeedMPS() const { return current_rpm/60.0f; }
+float Motor::getSpeedMPS() const { return current_radps * (_wheelDiameter * 0.5f); }
 
 void Motor::handleEncoder() {
     const bool a = digitalRead(_pinEncoderA);

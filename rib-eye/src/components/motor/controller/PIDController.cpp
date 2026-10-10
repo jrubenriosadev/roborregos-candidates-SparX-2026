@@ -3,7 +3,7 @@
 
 PIDController::PIDController(float kp, float ki, float kd, float minOutput, float maxOutput)
     : _kp(kp), _ki(ki), _kd(kd), _minOuput(minOutput), _maxOutput(maxOutput),
-      integral_pp(0.0f), lastMeasurement(0.0f), lastErr(0.0f), lastOutput(0.0f),
+      integral_pp(0.0f), lastMeasurement(0.0f), lastErr(0.0f), lastOutput(0.0f), lastD(0.0f), 
       lastMicros(0), _isEnabled(true), _angleWrapping(false) {}
   
 void PIDController::reset() {
@@ -12,6 +12,8 @@ void PIDController::reset() {
   lastErr = 0.0f;
   lastOutput = 0.0f;
   lastMicros = 0;
+  lastD = 0.0f;
+  primed = false;
 }
 
 float PIDController::CWErr(float setpoint, float measurement) const {
@@ -55,12 +57,11 @@ float PIDController::update(float measurement, float setpoint, float dt) {
   integral_pp = constrain(integral_pp, -maxI, maxI);
   float iT = _ki * integral_pp;
   
-  float dT = 0.0f;
-  if (fabsf(measurement - lastMeasurement) > 1e-5f) {
-      float d = (measurement - lastMeasurement) / dt;
-      dT = -_kd * d;
-      lastMeasurement = measurement;
-  }
+  if(!primed) { lastMeasurement = measurement; lastD = 0.0f; primed = true; }
+  float dMeas = _angleWrapping ? CWErr(measurement, lastMeasurement) : (measurement - lastMeasurement);
+  lastMeasurement = measurement;
+  lastD += kDAlpha * ((dMeas / dt) - lastD);
+  float dT = -_kd * lastD;
 
   lastOutput = constrain(pT + iT + dT, _minOuput, _maxOutput);
   return lastOutput;

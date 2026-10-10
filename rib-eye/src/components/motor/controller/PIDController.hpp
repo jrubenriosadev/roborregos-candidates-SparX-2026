@@ -48,6 +48,9 @@ class PIDController {
         float lastMeasurement;
         float lastErr;
         float lastOutput;
+        float lastD;
+        bool primed = false;
+        static constexpr float kDAlpha = 0.3f;
 
         unsigned long lastMicros;
         bool _isEnabled;
