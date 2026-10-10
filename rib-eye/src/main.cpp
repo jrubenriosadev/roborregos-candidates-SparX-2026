@@ -35,22 +35,31 @@ void loop() {
     if (millis() - lastPrint >= 250) {
         lastPrint = millis();
 
-        float leftDist = container.getLeftDistance();
-        float rightDist = container.getRightDistance();
+        Bno& bno = container.getBno();
 
-        bool leftValid = container.getLeftUlt().isValid();
-        bool rightValid = container.getRightUlt().isValid();
+        if (!bno.isUp()) {
+            const char* err = "el bno fueron los amigos que hicimos en el camino...";
+            Serial.println(err);
+            bluetooth.println(err);
+        } else {
+            float relativeYaw = bno.getRelativeYaw();
+            imu::Vector<3> euler = bno.getEuler();
 
-        char buffer[120];
-        snprintf(buffer, sizeof(buffer),
-            "L: %6.2f cm [%s] | R: %6.2f cm [%s]",
-            leftDist,
-            leftValid ? "OK" : "INVALID",
-            rightDist,
-            rightValid ? "OK" : "INVALID"
-        );
+            uint8_t sys = 0, gyro = 0, accel = 0, mag = 0;
+            bno.getCalibration(&sys, &gyro, &accel, &mag);
 
-        Serial.println(buffer);
-        bluetooth.println(buffer);
+            char buffer[160];
+            snprintf(buffer, sizeof(buffer),
+                "YawRel: %6.2f° | Yaw: %6.2f° | Pitch: %6.2f° | Roll: %6.2f° | Cal [S:%d G:%d A:%d M:%d]",
+                relativeYaw,
+                euler.x(),
+                euler.z(), // Pitch
+                euler.y(), // Roll
+                sys, gyro, accel, mag
+            );
+
+            Serial.println(buffer);
+            bluetooth.println(buffer);
+        }
     }
 }
