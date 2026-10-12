@@ -62,6 +62,7 @@ class Motor {
         float _wheelDiameter;
 
         volatile long e_count;
+        volatile unsigned long _lastInterruptTime;
 
         long last_count;
         unsigned long last_vel_time;

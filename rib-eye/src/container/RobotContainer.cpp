@@ -19,9 +19,7 @@ const Target TABLE[] {
 const int num_colors = sizeof(TABLE) / sizeof(TABLE[0]);
 
 bool inRange(const RGB& current, const RGB& target, float t) {
-    return (fabsf(current.r - target.r) <= t) &&
-           (fabsf(current.g - target.g) <= t) &&
-           (fabsf(current.b - target.b) <= t);
+    return (fabsf(current.r - target.r) <= t) && (fabsf(current.g - target.g) <= t) && (fabsf(current.b - target.b) <= t);
 }
 
 RobotContainer::RobotContainer() 
@@ -29,10 +27,20 @@ RobotContainer::RobotContainer()
       _lastRGB{0.0f, 0.0f, 0.0f},
       _leftUltra(Pins::Ultrasonic::kLeftEcho, Pins::Ultrasonic::kLeftTrigger, Pins::Ultrasonic::maxRange),
       _rightUltra(Pins::Ultrasonic::kRightEcho, Pins::Ultrasonic::kRightTrigger, Pins::Ultrasonic::maxRange),
+      _tofL(Pins::ToF::kLeftXShut, Pins::ToF::kLeftAddr),
+      _tofR(Pins::ToF::kRightXShut, Pins::ToF::kRightAddr),
       _lastUltraToggle(0),
       _readToggle(false) {}
 
 void RobotContainer::init() {
+    _tofL.powerOff();
+    _tofR.powerOff();
+    delay(20);
+    _tofL.init(Wire1);
+    delay(15);
+    _tofR.init(Wire1);
+    delay(15);
+
     if (_bno.init(Wire)) {
         _bno.resetHeading();
     }
@@ -40,14 +48,16 @@ void RobotContainer::init() {
     if (_tcs.init()) {
         _tcs.setLed(true);
     }
+    _drive.init();
 
     _leftUltra.init();
     _rightUltra.init();
-    _drive.init();
 }
 
 void RobotContainer::update() {
     _bno.update();
+    _tofL.update();
+    _tofR.update();
 
     unsigned long c = millis();
     if (c - _lastUltraToggle >= 40) {
@@ -72,6 +82,10 @@ Ultrasonic& RobotContainer::getRightUlt() { return _rightUltra; }
 float RobotContainer::getLeftDistance() const { return _leftFilter.valid() ? _leftFilter.value() : Pins::Ultrasonic::maxRange; }
 float RobotContainer::getRightDistance() const { return _rightFilter.valid() ? _rightFilter.value() : Pins::Ultrasonic::maxRange; }
 
+uint16_t RobotContainer::getTofLeftMm() const { return _tofL.getDistance(); }
+uint16_t RobotContainer::getTofRightMm() const { return _tofR.getDistance(); }
+bool RobotContainer::tofReady() const { return _tofL.isUp() && _tofR.isUp(); }
+
 ColorDetected RobotContainer::getColorDetected() {
     RGB c;
     if (_tcs.readAsync(c, 100)) {
@@ -91,4 +105,17 @@ ColorDetected RobotContainer::getColorDetected() {
 
 RGB RobotContainer::getLastRGB() const {
     return _lastRGB;
+}
+
+bool RobotContainer::frontWall() const {
+    if (!tofReady()) return true;
+    return _tofL.getDistance() < DriveConfig::kFrontWallMm || _tofR.getDistance() < DriveConfig::kFrontWallMm;
+}
+
+bool RobotContainer::leftWall() const {
+    return getLeftDistance() < DriveConfig::kSideWallCm;
+}
+
+bool RobotContainer::rightWall() const {
+    return getRightDistance() < DriveConfig::kSideWallCm;
 }

@@ -18,10 +18,10 @@ void ToF::powerOff() {
 
 bool ToF::init(TwoWire &bus) {
     _wireBus = &bus;
-    pinMode(_xShutPin, OUTPUT);
     
+    pinMode(_xShutPin, OUTPUT);
     digitalWrite(_xShutPin, HIGH);
-    delay(10);
+    delay(15);
 
     if (!_lox.begin(_i2c, false, _wireBus)) {
         _state = ToFStates::ERR;
@@ -39,13 +39,7 @@ void ToF::update() {
 
     if (_lox.isRangeComplete()) {
         uint16_t dist = _lox.readRangeResult();
-        
-        if (dist > 2000) {
-            _currentDistanceMm = 2000; 
-        } else {
-            _currentDistanceMm = dist;
-        }
-        
+        _currentDistanceMm = (dist > 2000) ? 2000 : dist;
         _state = ToFStates::UP;
         _lastMT = millis();
     } else if (millis() - _lastMT > _timeout_ms) {
@@ -56,14 +50,6 @@ void ToF::update() {
     }
 }
 
-uint16_t ToF::getDistance() const {
-    return _currentDistanceMm;
-}
-
-bool ToF::isUp() const {
-    return _state == ToFStates::UP;
-}
-
-ToFStates ToF::getState() const {
-    return _state;
-}
+uint16_t ToF::getDistance() const { return _currentDistanceMm; }
+bool ToF::isUp() const { return _state == ToFStates::UP; }
+ToFStates ToF::getState() const { return _state; }

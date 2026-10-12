@@ -34,7 +34,6 @@ bool ColorSensor::readAsync(RGB &color, unsigned long intervalMS) {
             lastRGB.g = (float)g / c * 255.0f;
             lastRGB.b = (float)b / c * 255.0f;
         }
-        tcs.getRGB(&lastRGB.r, &lastRGB.g, &lastRGB.b);
 
         color = lastRGB;
         return true;

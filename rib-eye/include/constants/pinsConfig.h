@@ -25,6 +25,14 @@ namespace Pins {
         static constexpr float maxRange = 15.0f;
     };
 
+    struct ToF {
+        static constexpr uint8_t kLeftXShut = 13;
+        static constexpr uint8_t kLeftAddr = 0x30;
+
+        static constexpr uint8_t kRightXShut = 4;
+        static constexpr uint8_t kRightAddr = 0x31;
+    };
+
     struct Motors {
         static constexpr uint8_t kLeftMotorIN1 = 27; // 27
         static constexpr uint8_t kLeftMotorIN2 = 26; // 26

@@ -7,7 +7,9 @@
 #include "../components/led-rgb/ledRGB.hpp"
 #include "../components/ultrasonic/Ultrasonic.h"
 #include "../components/ultrasonic/WallFilter.hpp"
+#include "../components/tof-sensor/ToF.hpp"
 #include "../include/constants/pinsConfig.h"
+#include "../include/constants/driveConfig.h"
 
 enum class ColorDetected {
     NONE,
@@ -38,6 +40,14 @@ class RobotContainer {
         WallFilter getLeftWall() const;
         WallFilter getRightWall() const;
 
+        bool frontWall() const;
+        bool leftWall() const;
+        bool rightWall() const;
+
+        uint16_t getTofLeftMm() const;
+        uint16_t getTofRightMm() const;
+        bool tofReady() const;
+
         ColorDetected getColorDetected();
         RGB getLastRGB() const;
 
@@ -47,6 +57,7 @@ class RobotContainer {
         ColorSensor _tcs;
         ColorDetected _lastColor;
         Ultrasonic _leftUltra, _rightUltra;
+        ToF _tofL, _tofR;
         RGB _lastRGB;
 
         WallFilter _leftFilter, _rightFilter;

@@ -23,11 +23,8 @@ static const ISRFunc isrTable[8] = {
 };
 
 Motor::Motor(
-    uint8_t pinIN1, uint8_t pinIN2, uint8_t pinPWM, uint8_t pinEncoderA, uint8_t pinEncoderB, 
-    float ppr, float wheelDiameterM, bool inverted) 
-: _pinIN1(pinIN1), _pinIN2(pinIN2), _pinPWM(pinPWM), _pinEncoderA(pinEncoderA), _pinEncoderB(pinEncoderB),
-  _inverted(inverted), _ppr(ppr), _wheelDiameter(wheelDiameterM), 
-  e_count(0), last_count(0), last_vel_time(0), current_rpm(0.0f), current_radps(0.0f), _slotIndex(255) {}
+    uint8_t pinIN1, uint8_t pinIN2, uint8_t pinPWM, uint8_t pinEncoderA, uint8_t pinEncoderB, float ppr, float wheelDiameterM, bool inverted) 
+    : _pinIN1(pinIN1), _pinIN2(pinIN2), _pinPWM(pinPWM), _pinEncoderA(pinEncoderA), _pinEncoderB(pinEncoderB), _inverted(inverted), _ppr(ppr), _wheelDiameter(wheelDiameterM), e_count(0), _lastInterruptTime(0), last_count(0), last_vel_time(0), current_rpm(0.0f), current_radps(0.0f), _slotIndex(255) {}
 
 Motor::~Motor() {
     stop();
@@ -61,9 +58,7 @@ void Motor::init() {
 void Motor::move(int speed) {
     speed = constrain(speed, -255, 255);
 
-    if(_inverted) {
-        speed = -speed;
-    }
+    if(_inverted) speed = -speed;
 
     if(speed > 0) {
         digitalWrite(_pinIN1, HIGH);
@@ -167,6 +162,13 @@ float Motor::getRadSec() const { return current_radps; }
 float Motor::getSpeedMPS() const { return current_radps * (_wheelDiameter * 0.5f); }
 
 void Motor::handleEncoder() {
+    unsigned long now = micros();
+    
+    if (now - _lastInterruptTime < 30) { 
+        return;
+    }
+    _lastInterruptTime = now;
+
     const bool a = digitalRead(_pinEncoderA);
     const bool b = digitalRead(_pinEncoderB);
     

@@ -13,7 +13,7 @@ void PIDController::reset() {
   lastOutput = 0.0f;
   lastMicros = 0;
   lastD = 0.0f;
-  primed = false;
+  primed = false; 
 }
 
 float PIDController::CWErr(float setpoint, float measurement) const {
