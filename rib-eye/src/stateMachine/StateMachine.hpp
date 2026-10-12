@@ -4,13 +4,13 @@
 #include "../container/RobotContainer.hpp"
 
 enum class States {
-    WAIT_GREEN,
-    PREP_TILE,
-    MOVING_TILE,
-    WAIT_TILE,
+    WAITING,
+    PREP,
+    MOVING,
+    DELAY,
     DECIDE,
-    TURNING,
-    WAIT_TURN,
+    STEERING,
+    TURN_DELAY,
     STOPPED
 };
 

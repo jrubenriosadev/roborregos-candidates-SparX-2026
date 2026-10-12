@@ -16,9 +16,9 @@ Drive::Drive()
         Pins::Motors::kWheelDiameter, Pins::Motors::rightInversion
       ),
       _steerPID(Cfg::kYawKp, Cfg::kYawKi, Cfg::kYawKd, -255.0f, 255.0f),
-      _turnPID(Cfg::kTurnKp, 0.0f, Cfg::kTurnKd, -255.0f, 255.0f),
+      _turnPID(Cfg::kSteerKp, 0.0f, Cfg::kSteerKd, -255.0f, 255.0f),
       _targetYaw(0.0f),
-      _targetDistance(Cfg::kTileSize),
+      _targetDistance(Cfg::kTSize),
       _wallErrFilt(0.0f) {}
 
 void Drive::init() {
@@ -42,7 +42,7 @@ void Drive::prepAngle(float deg_yawAngle) {
     _steerPID.reset();
     _turnPID.reset();
     _settleCount = 0;
-    _targetYaw = deg_yawAngle * Cfg::kDeg2Rad;
+    _targetYaw = deg_yawAngle * Cfg::kDegToRad;
 }
 
 bool Drive::turnToAngle(float currentYawDeg) {
@@ -51,13 +51,13 @@ bool Drive::turnToAngle(float currentYawDeg) {
         return false;
     }
 
-    const float out = _turnPID.update(currentYawDeg * Cfg::kDeg2Rad, _targetYaw);
+    const float out = _turnPID.update(currentYawDeg * Cfg::kDegToRad, _targetYaw);
     const float err = _turnPID.getErr();
-    const float errDeg = fabsf(err) / Cfg::kDeg2Rad;
+    const float errDeg = fabsf(err) / Cfg::kDegToRad;
 
     if (errDeg < Cfg::kSteerTol) {
         stop();
-        if (++_settleCount >= Cfg::kTurnSettleTicks) {
+        if (++_settleCount >= Cfg::kSteerST) {
             _settleCount = 0;
             return true;
         }
@@ -66,9 +66,9 @@ bool Drive::turnToAngle(float currentYawDeg) {
 
     _settleCount = 0;
 
-    float cmd = constrain(out, -Cfg::kTurnMaxPWM, Cfg::kTurnMaxPWM);
-    if (fabsf(cmd) < Cfg::kTurnMinPWM) {
-        cmd = copysignf(Cfg::kTurnMinPWM, err);
+    float cmd = constrain(out, -Cfg::kSteerMax, Cfg::kSteerMax);
+    if (fabsf(cmd) < Cfg::kSteerMin) {
+        cmd = copysignf(Cfg::kSteerMin, err);
     }
 
     setOpenLoop((int)cmd, (int)-cmd);
@@ -82,55 +82,55 @@ void Drive::prepMoveTile(float targetDistanceMeters, float targetYawDeg) {
     _wallErrFilt = 0.0f;
 
     _targetDistance = targetDistanceMeters;
-    _targetYaw = targetYawDeg * Cfg::kDeg2Rad;
+    _targetYaw = targetYawDeg * Cfg::kDegToRad;
 }
 
 bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float baseSpeed) {
     if (isnan(currentYaw)) currentYaw = 0.0f;
 
     const float l = _leftMotor.getDistanceMeters();
-    const float r = _rightMotor.getDistanceMeters() * Cfg::kRightScale;
+    const float r = _rightMotor.getDistanceMeters() * Cfg::kRScale;
     const float remaining = _targetDistance - (l + r) * 0.5f;
 
-    if (remaining <= Cfg::kStopTolerance) {
+    if (remaining <= Cfg::kStopTol) {
         stop();
         return true;
     }
 
     float speed = baseSpeed;
-    if (remaining < Cfg::kSlowZone) {
-        speed = fmaxf(Cfg::kMinPWM, baseSpeed * (remaining / Cfg::kSlowZone));
+    if (remaining < Cfg::kSlow) {
+        speed = fmaxf(Cfg::kMinOutput, baseSpeed * (remaining / Cfg::kSlow));
     }
 
-    const float yawRad = currentYaw * Cfg::kDeg2Rad;
+    const float yawRad = currentYaw * Cfg::kDegToRad;
     const float baseYawErr = fabsf(_steerPID.CWErr(_targetYaw, yawRad));
 
     float wallOffset = 0.0f;
-    const bool wallsOk = Cfg::kUseWall &&
-        distLeft > 0.0f && distLeft < Cfg::kWallMaxCm &&
-        distRight > 0.0f && distRight < Cfg::kWallMaxCm &&
-        baseYawErr < Cfg::kWallMaxYawErrDeg * Cfg::kDeg2Rad;
+    const bool wallsOk = Cfg::kUltra &&
+        distLeft > 0.0f && distLeft < Cfg::kUMax &&
+        distRight > 0.0f && distRight < Cfg::kUMax &&
+        baseYawErr < Cfg::kUMaxYawErrDeg * Cfg::kDegToRad;
 
     if (wallsOk) {
-        const float wallErr = constrain(distRight - distLeft, -Cfg::kWallErrClampCm, Cfg::kWallErrClampCm);
-        _wallErrFilt += Cfg::kWallFilterAlpha * (wallErr - _wallErrFilt);
+        const float wallErr = constrain(distRight - distLeft, -Cfg::kUErrClamp, Cfg::kUErrClamp);
+        _wallErrFilt += Cfg::kUFilterA * (wallErr - _wallErrFilt);
 
         float e = _wallErrFilt;
-        if (fabsf(e) < Cfg::kWallDeadbandCm) {
+        if (fabsf(e) < Cfg::kUDeadband) {
             e = 0.0f;
         } else {
-            e -= (e > 0.0f ? Cfg::kWallDeadbandCm : -Cfg::kWallDeadbandCm);
+            e -= (e > 0.0f ? Cfg::kUDeadband : -Cfg::kUDeadband);
         }
 
-        const float maxOffset = Cfg::kWallMaxOffsetDeg * Cfg::kDeg2Rad;
-        wallOffset = constrain(e * Cfg::kWallDegPerCm * Cfg::kDeg2Rad, -maxOffset, maxOffset);
+        const float maxOffset = Cfg::kUMaxOffDeg * Cfg::kDegToRad;
+        wallOffset = constrain(e * Cfg::kUDegPcm * Cfg::kDegToRad, -maxOffset, maxOffset);
     } else {
-        _wallErrFilt *= Cfg::kWallOffsetDecay;
+        _wallErrFilt *= Cfg::kUOffsetDec;
     }
 
     const float imuOut = _steerPID.update(yawRad, _targetYaw + wallOffset);
-    const float imuSteer = Cfg::kUseImu ? imuOut : 0.0f;
-    const float encSteer = Cfg::kUseEnc ? (-Cfg::kEncKp * (l - r)) : 0.0f;
+    const float imuSteer = Cfg::kImu ? imuOut : 0.0f;
+    const float encSteer = Cfg::kEnc ? (-Cfg::kEncKp * (l - r)) : 0.0f;
 
     const float totalSteer = constrain(encSteer + imuSteer, -Cfg::kMaxSteer, Cfg::kMaxSteer);
 

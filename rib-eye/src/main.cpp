@@ -7,21 +7,21 @@ BluetoothSerial bluetooth;
 RobotContainer container;
 StateMachine stateMachine(container);
 
-constexpr unsigned long kControlPeriod = 20000UL;
-unsigned long nextTick = 0;
-unsigned long lastPrint = 0;
+constexpr unsigned long kCPeriod = 20000UL;
+unsigned long nTick = 0;
+unsigned long lPrint = 0;
 
-void recoverI2C(uint8_t sdaPin, uint8_t sclPin) {
-    pinMode(sdaPin, INPUT_PULLUP);
-    pinMode(sclPin, OUTPUT);
+void recover(uint8_t sda, uint8_t scl) {
+    pinMode(sda, INPUT_PULLUP);
+    pinMode(scl, OUTPUT);
     for (int i = 0; i < 10; i++) {
-        digitalWrite(sclPin, LOW);
+        digitalWrite(scl, LOW);
         delayMicroseconds(5);
-        digitalWrite(sclPin, HIGH);
+        digitalWrite(scl, HIGH);
         delayMicroseconds(5);
     }
-    pinMode(sdaPin, INPUT);
-    pinMode(sclPin, INPUT);
+    pinMode(sda, INPUT);
+    pinMode(scl, INPUT);
 }
 
 void setup() {
@@ -29,8 +29,8 @@ void setup() {
     bluetooth.begin("RIBEYE");
     while (!Serial && millis() < 3000);
 
-    recoverI2C(21, 22);
-    recoverI2C(32, 23);
+    recover(21, 22);
+    recover(32, 23);
 
     Wire.begin(21, 22);
     Wire.setClock(100000);
@@ -43,20 +43,21 @@ void setup() {
     container.init();
     container.getDrive().stop();
 
-    nextTick = micros();
+    nTick = micros();
 }
 
 void loop() {
+    // Esto es para no usar delay(20) al final, es mas preciso y menos bloqueante
     const unsigned long now = micros();
-    if ((long)(now - nextTick) < 0) return;
-    nextTick += kControlPeriod;
-    if ((long)(now - nextTick) > (long)kControlPeriod) nextTick = now + kControlPeriod;
+    if ((long)(now - nTick) < 0) return;
+    nTick += kCPeriod;
+    if ((long)(now - nTick) > (long)kCPeriod) nTick = now + kCPeriod;
 
     container.update();
     stateMachine.update();
 
-    if (millis() - lastPrint >= 250) {
-        lastPrint = millis();
+    if (millis() - lPrint >= 250) {
+        lPrint = millis();
 
         char buffer[160];
         snprintf(buffer, sizeof(buffer),

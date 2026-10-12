@@ -33,6 +33,7 @@ RobotContainer::RobotContainer()
       _readToggle(false) {}
 
 void RobotContainer::init() {
+    //TODO: probar el i2c
     _tofL.powerOff();
     _tofR.powerOff();
     delay(20);
@@ -109,13 +110,13 @@ RGB RobotContainer::getLastRGB() const {
 
 bool RobotContainer::frontWall() const {
     if (!tofReady()) return true;
-    return _tofL.getDistance() < DriveConfig::kFrontWallMm || _tofR.getDistance() < DriveConfig::kFrontWallMm;
+    return _tofL.getDistance() < DriveConfig::kFWallmm || _tofR.getDistance() < DriveConfig::kFWallmm;
 }
 
 bool RobotContainer::leftWall() const {
-    return getLeftDistance() < DriveConfig::kSideWallCm;
+    return getLeftDistance() < DriveConfig::kSWallcm;
 }
 
 bool RobotContainer::rightWall() const {
-    return getRightDistance() < DriveConfig::kSideWallCm;
+    return getRightDistance() < DriveConfig::kSWallcm;
 }

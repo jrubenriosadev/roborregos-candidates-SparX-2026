@@ -4,20 +4,20 @@
 #include "Arduino.h"
 
 namespace DriveConfig {
-    constexpr float kDeg2Rad = 3.14159265358979f / 180.0f;
+    constexpr float kDegToRad = 3.14159265358979f / 180.0f;
 
-    constexpr float kTileSize = 0.30f;
-    constexpr float kBaseSpeed = 150.0f;
-    constexpr float kMinPWM = 100.0f;
-    constexpr float kSlowZone = 0.10f;
-    constexpr float kStopTolerance = 0.02f;
+    constexpr float kTSize = 0.30f;
+    constexpr float kBSpeed = 150.0f;
+    constexpr float kMinOutput = 100.0f;
+    constexpr float kSlow = 0.10f;
+    constexpr float kStopTol = 0.02f;
     constexpr float kMaxSteer = 40.0f;
 
-    constexpr float kRightScale = 1.0f;
+    constexpr float kRScale = 1.0f;
 
-    constexpr bool kUseEnc = true;
-    constexpr bool kUseImu = true;
-    constexpr bool kUseWall = true;
+    constexpr bool kEnc = true;
+    constexpr bool kImu = true;
+    constexpr bool kUltra = true;
 
     constexpr float kYawKp = 220.0f;
     constexpr float kYawKi = 0.0f;
@@ -25,31 +25,31 @@ namespace DriveConfig {
 
     constexpr float kEncKp = 150.0f;
 
-    constexpr float kWallMaxCm = 10.0f;
-    constexpr float kWallDeadbandCm = 1.5f;
-    constexpr float kWallFilterAlpha = 0.15f;
-    constexpr float kWallErrClampCm = 6.0f;
-    constexpr float kWallDegPerCm = 1.5f;
-    constexpr float kWallMaxOffsetDeg = 5.0f;
-    constexpr float kWallMaxYawErrDeg = 10.0f;
-    constexpr float kWallOffsetDecay = 0.9f;
+    constexpr float kUMax = 10.0f;
+    constexpr float kUDeadband = 1.5f;
+    constexpr float kUFilterA = 0.15f;
+    constexpr float kUErrClamp = 6.0f;
+    constexpr float kUDegPcm = 1.5f;
+    constexpr float kUMaxOffDeg = 5.0f;
+    constexpr float kUMaxYawErrDeg = 10.0f;
+    constexpr float kUOffsetDec = 0.9f; // Decay
 
-    constexpr float kTurnKp = 260.0f;
-    constexpr float kTurnKd = 12.0f;
+    constexpr float kSteerKp = 260.0f;
+    constexpr float kSteerKd = 12.0f;
     constexpr float kSteerTol = 2.0f;
-    constexpr uint8_t kTurnSettleTicks = 5;
-    constexpr float kTurnMaxPWM = 250.0f;
-    constexpr float kTurnMinPWM = 120.0f;
-    constexpr float kFilterAlpha = 0.5f;
-    constexpr float kRightTurnDeg = 90.0f;
+    constexpr uint8_t kSteerST = 5; // Settle Ticks
+    constexpr float kSteerMax = 250.0f;
+    constexpr float kSteerMin = 120.0f;
+    constexpr float kFilterA = 0.5f; // Alpha
+    constexpr float kSteerDeg90 = 90.0f;
 
 
-    constexpr uint16_t kFrontWallMm = 100;
-    constexpr float kSideWallCm = 15.0f;
+    constexpr uint16_t kFWallmm = 100;
+    constexpr float kSWallcm = 15.0f; // cm
     constexpr unsigned long kDecideDelayMs = 1000;
-    constexpr unsigned long kTurnSettleMs = 300;
-    constexpr bool kPreferRight = true;
-    constexpr bool kDeadEndUTurn = true;
+    constexpr unsigned long kSteerSms = 300; // Settle ms
+    constexpr bool kRightPref = true;
+    constexpr bool kDeadEnd180 = true;
 }
 
 #endif
