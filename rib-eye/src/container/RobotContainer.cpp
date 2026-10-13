@@ -34,13 +34,16 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::init() {
     //TODO: probar el i2c
-    _tofL.powerOff();
-    _tofR.powerOff();
-    delay(20);
-    _tofL.init(Wire1);
-    delay(15);
-    _tofR.init(Wire1);
-    delay(15);
+    for (int attempt = 0; attempt < 5; ++attempt) {
+        _tofL.powerOff();
+        _tofR.powerOff();
+        delay(20);
+        const bool okL = _tofL.init(Wire1);
+        delay(15);
+        const bool okR = _tofR.init(Wire1);
+        delay(15);
+        if (okL && okR) break;
+    }
 
     if (_bno.init(Wire)) {
         _bno.resetHeading();

@@ -22,6 +22,9 @@ Drive::Drive()
       _wallErrFilt(0.0f) {}
 
 void Drive::init() {
+    pinMode(Pins::Motors::kStandBy, OUTPUT);
+    digitalWrite(Pins::Motors::kStandBy, HIGH);
+    
     _leftMotor.init();
     _rightMotor.init();
     _steerPID.setAngleWrapping(true);
@@ -105,14 +108,29 @@ bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float ba
     const float yawRad = currentYaw * Cfg::kDegToRad;
     const float baseYawErr = fabsf(_steerPID.CWErr(_targetYaw, yawRad));
 
-    float wallOffset = 0.0f;
-    const bool wallsOk = Cfg::kUltra &&
-        distLeft > 0.0f && distLeft < Cfg::kUMax &&
-        distRight > 0.0f && distRight < Cfg::kUMax &&
-        baseYawErr < Cfg::kUMaxYawErrDeg * Cfg::kDegToRad;
+        float wallOffset = 0.0f;
+    const bool leftOk = distLeft > 0.0f && distLeft < Cfg::kUMax;
+    const bool rightOk = distRight > 0.0f && distRight < Cfg::kUMax;
+    const bool yawOk = baseYawErr < Cfg::kUMaxYawErrDeg * Cfg::kDegToRad;
 
-    if (wallsOk) {
-        const float wallErr = constrain(distRight - distLeft, -Cfg::kUErrClamp, Cfg::kUErrClamp);
+    bool haveWall = false;
+    float rawErr = 0.0f;
+
+    if (Cfg::kUltra && yawOk) {
+        if (leftOk && rightOk) {
+            rawErr = distRight - distLeft;
+            haveWall = true;
+        } else if (leftOk) {
+            rawErr = 2.0f * (Cfg::kUTarget - distLeft);
+            haveWall = true;
+        } else if (rightOk) {
+            rawErr = 2.0f * (distRight - Cfg::kUTarget);
+            haveWall = true;
+        }
+    }
+
+    if (haveWall) {
+        const float wallErr = constrain(rawErr, -Cfg::kUErrClamp, Cfg::kUErrClamp);
         _wallErrFilt += Cfg::kUFilterA * (wallErr - _wallErrFilt);
 
         float e = _wallErrFilt;

@@ -30,6 +30,7 @@ void StateMachine::update() {
     switch (_currentState) {
         case States::WAITING: {
             _container.getDrive().stop();
+            if(!_container.tofReady()) break;
             if (color == ColorDetected::GREEN) {
                 _lockedYaw = _container.getBno().getRelativeYaw();
                 if (!isfinite(_lockedYaw)) break;

@@ -50,6 +50,7 @@ namespace Pins {
         static constexpr float kRightPPR = 480.0f;;
         static constexpr bool rightInversion = true;
 
+        static constexpr uint8_t kStandBy = 5;
         static constexpr float kWheelDiameter = 0.067f;
     };
 }
