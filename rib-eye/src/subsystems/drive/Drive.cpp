@@ -108,29 +108,29 @@ bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float ba
     const float yawRad = currentYaw * Cfg::kDegToRad;
     const float baseYawErr = fabsf(_steerPID.CWErr(_targetYaw, yawRad));
 
-        float wallOffset = 0.0f;
-    const bool leftOk = distLeft > 0.0f && distLeft < Cfg::kUMax;
-    const bool rightOk = distRight > 0.0f && distRight < Cfg::kUMax;
-    const bool yawOk = baseYawErr < Cfg::kUMaxYawErrDeg * Cfg::kDegToRad;
+    float wallOffset = 0.0f;
+    const bool okL = distLeft > 0.0f && distLeft < Cfg::kUMax;
+    const bool okR = distRight > 0.0f && distRight < Cfg::kUMax;
+    const bool okY = baseYawErr < Cfg::kUMaxYawErrDeg * Cfg::kDegToRad;
 
-    bool haveWall = false;
-    float rawErr = 0.0f;
+    bool wall = false;
+    float err = 0.0f;
 
-    if (Cfg::kUltra && yawOk) {
-        if (leftOk && rightOk) {
-            rawErr = distRight - distLeft;
-            haveWall = true;
-        } else if (leftOk) {
-            rawErr = 2.0f * (Cfg::kUTarget - distLeft);
-            haveWall = true;
-        } else if (rightOk) {
-            rawErr = 2.0f * (distRight - Cfg::kUTarget);
-            haveWall = true;
+    if (Cfg::kUltra && okY) {
+        if (okL && okR) {
+            err = distRight - distLeft;
+            wall = true;
+        } else if (okL) {
+            err = 2.0f * (Cfg::kUTarget - distLeft);
+            wall = true;
+        } else if (okR) {
+            err = 2.0f * (distRight - Cfg::kUTarget);
+            wall = true;
         }
     }
 
-    if (haveWall) {
-        const float wallErr = constrain(rawErr, -Cfg::kUErrClamp, Cfg::kUErrClamp);
+    if (wall) {
+        const float wallErr = constrain(err, -Cfg::kUErrClamp, Cfg::kUErrClamp);
         _wallErrFilt += Cfg::kUFilterA * (wallErr - _wallErrFilt);
 
         float e = _wallErrFilt;
