@@ -48,4 +48,76 @@ namespace maze {
         if(!isInside(p) || !isInside(neighbor(p, d))) return WallState::WALL;
         return _cells[p.y][p.x].wall(d);
     }
+
+    bool Maze::setConnection(Position p, Direction d, WallState s){
+        if(s == WallState::UNKNOWN || !isInside(p)) return false;
+        const int di = toIndex(d);
+        const Position n = neighbor(p,d);
+        Cell& a = mut(p);
+
+        if(!isInside(n)) {
+            if(s == WallState::OPEN) {++_conflicts; if(a.walls[di] == WallState::UNKNOWN) a.walls[di] = WallState::WALL; return false}
+            if(a.walls[di] == WallState::OPEN) {++_conflicts; return false;}
+            a.walls[di] = WallState::WALL;
+            return true;
+        }
+
+        Cell& b = mut(n);
+        const int oi = toIndex(opposite(d));
+        const WallState oa = a.walls[di], ob = b.walls[oi];
+        if((oa != WallState::UNKNOWN && oa != s) || (ob!= WallState::UNKNOWN && ob!= s)) {++_conflicts; return false;}
+        a.walls[di] = s;
+        a.walls[oi] = s;
+        if(s==WallState::OPEN) touch(n);
+        return true;
+    }
+
+    bool Maze::canMove(Position p, Direction d) const {
+        return connection(p,d) == WallState::OPEN && isInside(neighbor(p,d));
+    }
+
+    void Maze::markVisited(Position p) {
+        if(!isInside(p)) return;
+        mut(p).visited = true;
+        touch(p);
+    }
+
+    bool Maze::isVisited(Position p) const {return inBuffer(p) && _cells[p.y][p.x].visited;}
+
+    bool Maze::setColor(Position p, CellColor c) {
+        if(c==CellColor::UNKNOWN || !isInside(p)) return false;
+        mut(p).color = c;
+        return true;
+    }
+
+    void Maze::setEnd(Position p) {
+        if(!isInside(p)) return;
+        if(_isEnd) mut(_end).isFinish = false;
+        mut(p).isFinish = true;
+        _end = p;
+        _isEnd = true;
+    }
+
+    void Maze::unknownConnections(Position p) const {
+        int n = 0;
+        for(int i = 0; i < kDirCount; ++i)
+            if(connection(p, kAll[i]) == WallState::UNKNOWN) ++n;
+        return n; 
+    }
+
+    int Maze::visitedWithUnknownCount() const {
+        int n = 0;
+        for(int y = 0; y < kGridSize; ++y)
+            for(int x = 0; x < kGr[xidSize; ++x)
+                if(_cells[y][x].visited && unknownConnections(Position(x,y)) > 0) ++n;
+        return n;
+    }
+    
+    int Maze::visitedCount() const {
+        int n = 0;
+        for(int y = 0; y < kGridSize; ++y)
+            for(int x = 0; x < kGr[xidSize; ++x)
+                if(_cells[y][x].visited) ++n;
+        return n;
+    }
 }
