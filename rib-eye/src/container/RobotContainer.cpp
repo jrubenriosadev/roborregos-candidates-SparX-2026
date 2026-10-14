@@ -8,12 +8,12 @@ struct Target {
 };
 
 const Target TABLE[] {
-    {ColorDetected::RED, {180.0f, 50.0f, 40.0f}},
-    {ColorDetected::MAGENTA, {150.0f, 60.0f, 55.0f}},
-    {ColorDetected::CYAN, {50.0f, 110.0f, 95.0f}},
-    {ColorDetected::ORANGE, {150.0f, 75.0f, 35.0f}},
-    {ColorDetected::GREEN, {90.0f, 120.0f, 40.0f}},
-    {ColorDetected::YELLOW, {120.0f, 100.0f, 30.0f}}
+    {ColorDetected::RED, {180.0f, 70.0f, 60.0f}}, // 180 50 40
+    {ColorDetected::MAGENTA, {160.0f, 60.0f, 60.0f}}, // 150 60 55
+    {ColorDetected::CYAN, {60.0f, 115.0f, 110.0f}}, // 50 110 95
+    {ColorDetected::ORANGE, {160.0f, 85.0f, 50.0f}}, // 150 75 35
+    {ColorDetected::GREEN, {75.0f, 125.0f, 60.0f}}, // 90 120 40
+    {ColorDetected::YELLOW, {120.0f, 110.0f, 50.0f}} // 120 100 30
 };
 
 const int num_colors = sizeof(TABLE) / sizeof(TABLE[0]);
@@ -43,6 +43,7 @@ void RobotContainer::init() {
         const bool okR = _tofR.init(Wire1);
         delay(15);
         if (okL && okR) break;
+        //if (okR) break;
     }
 
     if (_bno.init(Wire)) {
@@ -89,6 +90,7 @@ float RobotContainer::getRightDistance() const { return _rightFilter.valid() ? _
 uint16_t RobotContainer::getTofLeftMm() const { return _tofL.getDistance(); }
 uint16_t RobotContainer::getTofRightMm() const { return _tofR.getDistance(); }
 bool RobotContainer::tofReady() const { return _tofL.isUp() && _tofR.isUp(); }
+//bool RobotContainer::tofReady() const { return _tofR.isUp(); }
 
 ColorDetected RobotContainer::getColorDetected() {
     RGB c;

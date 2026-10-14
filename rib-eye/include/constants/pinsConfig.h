@@ -30,7 +30,7 @@ namespace Pins {
         static constexpr uint8_t kLeftAddr = 0x30;
 
         static constexpr uint8_t kRightXShut = 4;
-        static constexpr uint8_t kRightAddr = 0x31;
+        static constexpr uint8_t kRightAddr = 0x29;
     };
 
     struct Motors {

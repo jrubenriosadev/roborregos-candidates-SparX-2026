@@ -60,6 +60,7 @@ void loop() {
         lPrint = millis();
 
         char buffer[160];
+        
         snprintf(buffer, sizeof(buffer),
                  "Yaw:%7.2f | ToF L:%4u R:%4u mm | US L:%5.1f R:%5.1f cm",
                  container.getBno().getRelativeYaw(),
@@ -67,6 +68,14 @@ void loop() {
                  container.getLeftDistance(), container.getRightDistance());
 
         Serial.println(buffer);
-        bluetooth.println(buffer);
+        bluetooth.println(buffer);         
+
+        /*snprintf(buffer, sizeof(buffer),
+                 "Yaw:%7.2f | R:%4u mm | US L:%5.1f R:%5.1f cm",
+                 container.getBno().getRelativeYaw(),
+                 container.getTofRightMm(),
+                 container.getLeftDistance(), container.getRightDistance());         
+        Serial.println(buffer);
+        bluetooth.println(buffer);*/
     }
 }

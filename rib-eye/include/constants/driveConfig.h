@@ -10,7 +10,7 @@ namespace DriveConfig {
     constexpr float kBSpeed = 150.0f;
     constexpr float kMinOutput = 100.0f;
     constexpr float kSlow = 0.10f;
-    constexpr float kStopTol = 0.02f;
+    constexpr float kStopTol = 0.04f;
     constexpr float kMaxSteer = 40.0f;
 
     constexpr float kRScale = 1.0f;
@@ -19,11 +19,11 @@ namespace DriveConfig {
     constexpr bool kImu = true;
     constexpr bool kUltra = true;
 
-    constexpr float kYawKp = 220.0f;
+    constexpr float kYawKp = 200.0f;
     constexpr float kYawKi = 0.0f;
     constexpr float kYawKd = 6.0f;
 
-    constexpr float kEncKp = 80.0f;
+    constexpr float kEncKp = 400.0f;
 
     constexpr float kUMax = 14.0f;
     constexpr float kUTarget = 9.0f;
