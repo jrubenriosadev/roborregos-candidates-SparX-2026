@@ -13,7 +13,7 @@ namespace maze {
 
     constexpr Position kInvalidPosition(-1,-1);
     constexpr Position neighbor(Position p, Direction d) {
-        return d == Direction::NORTH ? Position(p.x, p.y-1) : Direction::EAST ? Position(p.x+1, p.y) : Direction::SOUTH ? Position(p.x, p.y+1) : Position(p.x-1,p.y);
+        return d == Direction::NORTH ? Position(p.x, p.y-1) : d == Direction::EAST ? Position(p.x+1, p.y) : d == Direction::SOUTH ? Position(p.x, p.y+1) : Position(p.x-1, p.y);
     }
 
     constexpr bool isAdjacent(Position a, Position b) {

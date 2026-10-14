@@ -56,7 +56,7 @@ namespace maze {
         Cell& a = mut(p);
 
         if(!isInside(n)) {
-            if(s == WallState::OPEN) {++_conflicts; if(a.walls[di] == WallState::UNKNOWN) a.walls[di] = WallState::WALL; return false}
+            if(s == WallState::OPEN) {++_conflicts; if(a.walls[di] == WallState::UNKNOWN) a.walls[di] = WallState::WALL; return false;}
             if(a.walls[di] == WallState::OPEN) {++_conflicts; return false;}
             a.walls[di] = WallState::WALL;
             return true;
@@ -98,7 +98,7 @@ namespace maze {
         _isEnd = true;
     }
 
-    void Maze::unknownConnections(Position p) const {
+    int Maze::unknownConnections(Position p) const {
         int n = 0;
         for(int i = 0; i < kDirCount; ++i)
             if(connection(p, kAll[i]) == WallState::UNKNOWN) ++n;
@@ -108,7 +108,7 @@ namespace maze {
     int Maze::visitedWithUnknownCount() const {
         int n = 0;
         for(int y = 0; y < kGridSize; ++y)
-            for(int x = 0; x < kGr[xidSize; ++x)
+            for(int x = 0; x < kGridSize; ++x)
                 if(_cells[y][x].visited && unknownConnections(Position(x,y)) > 0) ++n;
         return n;
     }
@@ -116,7 +116,7 @@ namespace maze {
     int Maze::visitedCount() const {
         int n = 0;
         for(int y = 0; y < kGridSize; ++y)
-            for(int x = 0; x < kGr[xidSize; ++x)
+            for(int x = 0; x < kGridSize; ++x)
                 if(_cells[y][x].visited) ++n;
         return n;
     }

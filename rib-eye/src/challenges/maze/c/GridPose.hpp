@@ -6,6 +6,6 @@ namespace maze {
         Position p;
         Direction h;
         GridPose() : p(), h(Direction::NORTH) {}
-        GridPose(Position _p, Direction _h) : p(_p), heading(_h) {}
+        GridPose(Position _p, Direction _h) : p(_p), h(_h) {}
     };
 }

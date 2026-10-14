@@ -15,16 +15,16 @@ namespace maze {
     constexpr Direction turn180(Direction d) {return fromIndex(toIndex(d) + 2);}
     constexpr Direction opposite(Direction d) {return turn180(d);}
 
-    constexpr Direction toGlobal(Direction h, Relative r) {return fromIndex(toIndex(h)+ static_cast<int>(rel));}
+    constexpr Direction toGlobal(Direction h, Relative r) {return fromIndex(toIndex(h)+ static_cast<int>(r));}
     constexpr Relative toRelative(Direction h, Direction global) {return static_cast<Relative>(((toIndex(global) - toIndex(h))%4+4)%4);}
     constexpr int quarterTurnsCW(Direction from, Direction to) {return ((toIndex(to) - toIndex(from))%4+4)%4;}
     
     inline const char* d_name(Direction d) {
         switch(d) {
             case Direction::NORTH: return "N";
-            case Direction::EAST return "E";
-            case Direction::SOUTH return "S";
-            case Direction::WEST return "W";
+            case Direction::EAST: return "E";
+            case Direction::SOUTH: return "S";
+            case Direction::WEST: return "W";
         }
         return "X";
     }
