@@ -8,12 +8,12 @@ struct Target {
 };
 
 const Target TABLE[] {
-    {ColorDetected::RED, {180.0f, 70.0f, 60.0f}}, // 180 50 40
-    {ColorDetected::MAGENTA, {160.0f, 60.0f, 60.0f}}, // 150 60 55
-    {ColorDetected::CYAN, {60.0f, 115.0f, 110.0f}}, // 50 110 95
-    {ColorDetected::ORANGE, {160.0f, 85.0f, 50.0f}}, // 150 75 35
-    {ColorDetected::GREEN, {75.0f, 125.0f, 60.0f}}, // 90 120 40
-    {ColorDetected::YELLOW, {120.0f, 110.0f, 50.0f}} // 120 100 30
+    {ColorDetected::RED, {180.0f, 70.0f, 60.0f}}, // 180 50 40  ------ // 180 70 60
+    {ColorDetected::MAGENTA, {160.0f, 60.0f, 60.0f}}, // 150 60 55 ------- // 160 60 60
+    {ColorDetected::CYAN, {50.0f, 110.0f, 95.0f}}, // 50 110 95 -------- // 60 115 110
+    {ColorDetected::ORANGE, {160.0f, 85.0f, 50.0f}}, // 150 75 35 ------ // 160 85 50
+    {ColorDetected::GREEN, {75.0f, 125.0f, 60.0f}}, // 90 120 40 ------ // 75 125 60
+    {ColorDetected::YELLOW, {120.0f, 100.0f, 30.0f}} // 120 100 30 ----- // 120 110 50
 };
 
 const int num_colors = sizeof(TABLE) / sizeof(TABLE[0]);
@@ -65,8 +65,9 @@ void RobotContainer::update() {
     _tofR.update();
 
     unsigned long c = millis();
-    if (c - _lastUltraToggle >= 40) {
-        _lastUltraToggle = c;
+    if (c - _lastUltraToggle >= 20) {
+        _lastUltraToggle += 20;
+        
         if (_readToggle) {
             float d = _leftUltra.readDistance();
             _leftFilter.push(d, _leftUltra.isValid());

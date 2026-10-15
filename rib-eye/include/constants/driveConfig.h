@@ -6,7 +6,7 @@
 namespace DriveConfig {
     constexpr float kDegToRad = 3.14159265358979f / 180.0f;
 
-    constexpr float kTSize = 0.30f;
+    constexpr float kTSize = 0.37f;
     constexpr float kBSpeed = 140.0f;
     constexpr float kMinOutput = 70.0f;
     constexpr float kSlow = 0.10f;
@@ -24,7 +24,7 @@ namespace DriveConfig {
     constexpr float kYawKi = 0.0f;
     constexpr float kYawKd = 6.0f;
 
-    constexpr float kEncKp = 80.0f;
+    constexpr float kEncKp = 160.0f;
 
     constexpr float kUMax = 14.0f;
     constexpr float kUTarget = 9.0f;

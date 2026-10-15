@@ -31,7 +31,7 @@ void StateMachine::update() {
         case States::WAITING: {
             _container.getDrive().stop();
             if(!_container.tofReady()) break;
-            if (color == ColorDetected::GREEN) {
+            if (color == ColorDetected::YELLOW) {
                 _lockedYaw = _container.getBno().getRelativeYaw();
                 if (!isfinite(_lockedYaw)) break;
                 _currentState = States::PREP;
@@ -47,7 +47,7 @@ void StateMachine::update() {
         }
 
         case States::MOVING: {
-            if (color == ColorDetected::RED) _redDetectedInTile = true;
+            if (color == ColorDetected::CYAN) _redDetectedInTile = true;
 
             const float yaw = _container.getBno().getRelativeYaw();
             const bool done = _container.getDrive().moveTile(yaw, _container.getLeftDistance(), _container.getRightDistance(),
@@ -55,7 +55,7 @@ void StateMachine::update() {
 
             if (done) {
                 _container.getDrive().stop();
-                if (_redDetectedInTile || color == ColorDetected::RED) {
+                if (_redDetectedInTile || color == ColorDetected::CYAN) {
                     _currentState = States::STOPPED;
                 } else {
                     _waitStartTime = millis();

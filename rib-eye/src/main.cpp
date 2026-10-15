@@ -1,4 +1,4 @@
-#define TEST_MODE 2  // 1=color  2=openloop  3=tile PID  4=statemachine
+#define TEST_MODE 4  // 1=color  2=openloop  3=tile PID  4=statemachine
 
 #include <Arduino.h>
 #include "container/RobotContainer.hpp"
@@ -243,7 +243,6 @@ void testLoop() {
 #error "TEST_MODE debe ser 1, 2, 3 o 4"
 #endif
 
-// ---------------------------------------------------------------- COMUN
 void setup() {
     Serial.begin(115200);
     bluetooth.begin("RIBEYE");
