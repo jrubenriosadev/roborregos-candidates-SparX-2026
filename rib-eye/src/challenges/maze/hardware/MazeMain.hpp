@@ -6,13 +6,12 @@
 class MazeMain {
     public:
         explicit MazeMain(RobotContainer& container)
-            : c_(container), maze_(), motion_(container), sensors_(container), sm_(maze_, sensors_, motion_) {}
+            : maze_(), motion_(container), sensors_(container), sm_(maze_, sensors_, motion_) {}
 
-        void update() { c_.update(); sm_.update(); }
+        void update() { sm_.update(); }
         const maze::MazeStateMachine& machine() const { return sm_; }
 
     private:
-        RobotContainer& c_;
         maze::Maze maze_;
         DriveMotion motion_;
         RobotSensors sensors_;

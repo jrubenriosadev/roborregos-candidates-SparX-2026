@@ -1,6 +1,6 @@
 #pragma once
-#include "../../container/RobotContainer.hpp"
-#include "../sensors/Sensors.hpp"
+#include "../../../container/RobotContainer.hpp"
+#include "../s/Sensors.hpp"
 
 class RobotSensors : public maze::Sensors {
     public:

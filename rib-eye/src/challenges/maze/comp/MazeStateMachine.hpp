@@ -29,7 +29,7 @@ namespace maze {
             const Trajectory& trajectory() const { return trajectory_; }
             const Trajectory& returnLog() const { return returnLog_; }
             const Maze& map() const { return maze_; }
-            bool finishFound() const { return maze_.hasFinish(); }
+            bool finishFound() const { return maze_.hasEnded(); }
 
         private:
             enum class Phase { START_SCAN, SCANNING, TURN_FOR_BACK, DECIDE, STEPPING, ROUTE_NEXT, ROUTE_STEPPING };

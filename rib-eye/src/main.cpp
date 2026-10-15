@@ -1,4 +1,4 @@
-#define TEST_MODE 5  // 1=color  2=openloop  3=tile PID  4=statemachine  5=MAZE (competencia)
+#define TEST_MODE 2  // 1=color  2=openloop  3=tile PID  4=statemachine  5=MAZE (competencia)
 
 
 #include <Arduino.h>

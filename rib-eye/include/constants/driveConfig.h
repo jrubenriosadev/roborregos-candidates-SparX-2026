@@ -12,7 +12,7 @@ namespace DriveConfig {
     constexpr float kSlow = 0.10f;
     constexpr float kStopTol = 0.03f;
     constexpr float kMaxSteer = 40.0f;
-    constexpr float kTrim = 0.0f;
+    constexpr float kTrim = 5.0f;
 
     constexpr float kRScale = 1.0f;
 

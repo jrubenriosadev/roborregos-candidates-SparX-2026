@@ -10,7 +10,7 @@ namespace {
             case ColorDetected::YELLOW:return maze::CellColor::YELLOW;
             case ColorDetected::ORANGE:return maze::CellColor::ORANGE;
             case ColorDetected::MAGENTA:return maze::CellColor::MAGENTA;
-            case ColorDetected::NONE:return maze::CellColor::OTHER;
+            case ColorDetected::NONE:return maze::CellColor::UNKNOWN;
         }
         return maze::CellColor::UNKNOWN;
     }
@@ -36,24 +36,24 @@ void RobotSensors::sample() {
 bool RobotSensors::pollScan(maze::SensorReadings& out) {
     if (!active_) return false;
     const unsigned long el = millis() - start_;
-    if (el < maze::MazeConfig::kScanSettleMs) return false;                       // robot en reposo
+    if (el < maze::MazeConfig::kScanSettleMs) return false; 
     if (el < maze::MazeConfig::kScanSettleMs + maze::MazeConfig::kScanWindowMs) { sample(); return false; }
 
     active_ = false;
     out = maze::SensorReadings();
     const bool enough = n_ >= maze::MazeConfig::kScanMinSamples;
-    out.frontWall = front_ * 2 > n_;
-    out.leftWall = left_ * 2 > n_;
-    out.rightWall = right_ * 2 > n_;
-    out.frontValid = enough && c_.tofReady();
-    out.leftValid = enough;
-    out.rightValid = enough;
+    out.fWall = front_ * 2 > n_;
+    out.lWall = left_ * 2 > n_;
+    out.rWall = right_ * 2 > n_;
+    out.fValid = enough && c_.tofReady();
+    out.lValid = enough;
+    out.rValid = enough;
 
     int best = 0;
     for (int i = 1; i < 7; ++i) if (colorVotes_[i] > colorVotes_[best]) best = i;
     if (enough && colorVotes_[best] * 100 >= n_ * maze::MazeConfig::kColorAgreePct) {
         out.color = toCellColor(static_cast<ColorDetected>(best));
-        out.colorValid = true;
+        out.cValid = true;
     }
     return true;
 }

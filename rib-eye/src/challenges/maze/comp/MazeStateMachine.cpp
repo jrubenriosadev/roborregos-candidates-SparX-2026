@@ -8,7 +8,7 @@ namespace maze {
     namespace {
         bool directionBetween(Position a, Position b, Direction& out) {
             for (int i = 0; i < kDirCount; ++i) {
-                if (neighbor(a, kAllDirections[i]) == b) { out = kAllDirections[i]; return true; }
+                if (neighbor(a, kAll[i]) == b) { out = kAll[i]; return true; }
             }
             return false;
         }
@@ -122,12 +122,12 @@ namespace maze {
 
     bool MazeStateMachine::startCellBackUnknown() const {
         const GridPose& p = navigator_.pose();
-        return !turnedForBack_ && trajectory_.size() == 1 && p.position == maze_.start() &&
-            maze_.connection(p.position, opposite(p.heading)) == WallState::UNKNOWN;
+        return !turnedForBack_ && trajectory_.size() == 1 && p.p == maze_.start() &&
+            maze_.connection(p.p, opposite(p.h)) == WallState::UNKNOWN;
     }
 
     bool MazeStateMachine::beginStep(Direction dir) {
-        stepFrom_ = navigator_.pose().position;
+        stepFrom_ = navigator_.pose().p;
         stepDir_ = dir;
         if (!navigator_.startStep(dir)) { fail(MazeError::DESYNC); return false; }
         return true;
@@ -155,16 +155,16 @@ namespace maze {
 
                 const GridPose p = navigator_.pose();
                 const IntegrationResult res = integrateReadings(maze_, p, r);
-                if (r.colorValid && r.color == MazeConfig::kFinishColor) maze_.setFinish(p.position);
+                if (r.cValid && r.color == MazeConfig::kFinishColor) maze_.setEnd(p.p);
 
                 const bool wallsUnknown = res.unknownLeft > 0;
-                const bool colorMissing = !r.colorValid && maze_.cell(p.position).color == CellColor::UNKNOWN;
+                const bool colorMissing = !r.cValid && maze_.cell(p.p).color == CellColor::UNKNOWN;
 
                 if (!wallsUnknown && !colorMissing) { scanRetries_ = 0; phase_ = Phase::DECIDE; break; }
 
                 if (wallsUnknown && res.unknownLeft == 1 && startCellBackUnknown()) {
                     turnedForBack_ = true;
-                    if (!navigator_.startTurn(turnAround(p.heading))) { fail(MazeError::DESYNC); break; }
+                    if (!navigator_.startTurn(turn180(p.h))) { fail(MazeError::DESYNC); break; }
                     phase_ = Phase::TURN_FOR_BACK;
                     break;
                 }
@@ -204,7 +204,7 @@ namespace maze {
                 if (s == NavStatus::RUNNING) break;
                 if (s != NavStatus::SUCCESS) { onStepFailed(s); break; }
 
-                const Position now = navigator_.pose().position;
+                const Position now = navigator_.pose().p;
                 if (!trajectory_.recordSuccessfulMove(Move(stepFrom_, now, stepDir_))) { fail(MazeError::TRAJECTORY_INVALID); break; }
                 if (now != pending_.target || !explorer_.commit(pending_)) { fail(MazeError::DESYNC); break; }
                 moveRetries_ = 0;
@@ -220,8 +220,8 @@ namespace maze {
     }
 
     void MazeStateMachine::prepareFinishRoute() {
-        if (!maze_.hasFinish()) { fail(MazeError::FINISH_NOT_FOUND); return; }
-        const PlanResult plan = PathPlanner::plan(maze_, navigator_.pose().position, maze_.finish());
+        if (!maze_.hasEnded()) { fail(MazeError::FINISH_NOT_FOUND); return; }
+        const PlanResult plan = PathPlanner::plan(maze_, navigator_.pose().p, maze_.end());
         if (plan.status != PlanStatus::FOUND) { fail(MazeError::NO_ROUTE_TO_FINISH); return; }
         route_ = plan.path;
         routeIdx_ = 0;
@@ -230,7 +230,7 @@ namespace maze {
 
     void MazeStateMachine::prepareReturnRoute() {
         if (trajectory_.isEmpty() || trajectory_.first() != maze_.start() ||
-            trajectory_.last() != navigator_.pose().position || !navigator_.poseTrusted()) {
+            trajectory_.last() != navigator_.pose().p || !navigator_.poseTrusted()) {
             fail(MazeError::TRAJECTORY_INVALID);
             return;
         }
@@ -242,11 +242,11 @@ namespace maze {
 
     void MazeStateMachine::onRouteDone() {
         if (state_ == MazeState::GOING_TO_FINISH) {
-            if (navigator_.pose().position == maze_.finish()) enter(MazeState::RETURNING);
+            if (navigator_.pose().p == maze_.end()) enter(MazeState::RETURNING);
             else fail(MazeError::DESYNC);
             return;
         }
-        if (navigator_.pose().position == maze_.start() && returnLog_.matchesReverseOf(trajectory_)) enter(MazeState::DONE);
+        if (navigator_.pose().p == maze_.start() && returnLog_.matchesReverseOf(trajectory_)) enter(MazeState::DONE);
         else fail(MazeError::TRAJECTORY_INVALID);
     }
 
@@ -256,7 +256,7 @@ namespace maze {
                 if (routeIdx_ + 1 >= route_.size()) { onRouteDone(); break; }
                 const Position cur = route_[routeIdx_];
                 const Position nxt = route_[routeIdx_ + 1];
-                if (navigator_.pose().position != cur) { fail(MazeError::DESYNC); break; }
+                if (navigator_.pose().p != cur) { fail(MazeError::DESYNC); break; }
                 Direction d = Direction::NORTH;
                 if (!directionBetween(cur, nxt, d)) { fail(MazeError::TRAJECTORY_INVALID); break; }
                 moveRetries_ = 0;
@@ -269,7 +269,7 @@ namespace maze {
                 if (s == NavStatus::RUNNING) break;
                 if (s != NavStatus::SUCCESS) { onStepFailed(s); break; }
 
-                const Position now = navigator_.pose().position;
+                const Position now = navigator_.pose().p;
                 if (now != route_[routeIdx_ + 1]) { fail(MazeError::DESYNC); break; }
                 Trajectory& log = (state_ == MazeState::GOING_TO_FINISH) ? trajectory_ : returnLog_;
                 if (!log.recordSuccessfulMove(Move(stepFrom_, now, stepDir_))) { fail(MazeError::TRAJECTORY_INVALID); break; }
