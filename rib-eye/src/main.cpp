@@ -54,10 +54,9 @@ const char* colorName(ColorDetected c) {
     }
 }
 
-// ---------------------------------------------------------------- 1: COLOR
 #if TEST_MODE == 1
 void testSetup() {
-    say("--- TEST COLOR (motores apagados) ---");
+    say("--- TEST COLOR ---");
 }
 
 void testLoop() {
@@ -73,7 +72,6 @@ void testLoop() {
     }
 }
 
-// ------------------------------------------------------------- 2: OPENLOOP
 #elif TEST_MODE == 2
 int pwm = 100;
 int cmdL = 0, cmdR = 0;
@@ -88,8 +86,6 @@ void apply(int l, int r) {
 
 void testSetup() {
     say("--- TEST OPENLOOP ---");
-    say("m adelante | b atras | l giro izq | r giro der | s stop | + / - cambia PWM (+-10)");
-    say("Se detiene solo a los 3 s");
 }
 
 void testLoop() {
@@ -108,7 +104,6 @@ void testLoop() {
     if ((cmdL != 0 || cmdR != 0) && millis() - cmdStart > kAutoStopMs) {
         cmdL = cmdR = 0;
         container.getDrive().stop();
-        say(">> auto-stop");
     }
 
     if (millis() - lastPrint >= 250) {
@@ -123,7 +118,6 @@ void testLoop() {
     }
 }
 
-// ------------------------------------------------------------ 3: TILE PID
 #elif TEST_MODE == 3
 enum class TS { IDLE, MOVING, PAUSE };
 TS ts = TS::IDLE;
@@ -152,10 +146,8 @@ void testSetup() {
     container.update();
     const float y = container.getBno().getRelativeYaw();
     lockedYaw = isfinite(y) ? y : 0.0f;
-    say("--- TEST TILE 0.3 m (PID) ---");
-    say("g un tile | c continuo on/off | z fijar rumbo actual | s stop");
     char b[60];
-    snprintf(b, sizeof(b), "rumbo fijado: %.2f", lockedYaw);
+    snprintf(b, sizeof(b), "r: %.2f", lockedYaw);
     say(b);
 }
 
@@ -164,7 +156,6 @@ void testLoop() {
     if (c == 'g' && ts == TS::IDLE) { tilesDone = 0; startTile(); }
     else if (c == 'c') {
         continuous = !continuous;
-        say(continuous ? ">> continuo ON (manda g para empezar)" : ">> continuo OFF");
     }
     else if (c == 'z') {
         const float y = container.getBno().getRelativeYaw();
@@ -174,7 +165,6 @@ void testLoop() {
         container.getDrive().stop();
         ts = TS::IDLE;
         continuous = false;
-        say(">> STOP");
     }
 
     Drive& d = container.getDrive();
@@ -222,7 +212,7 @@ void testLoop() {
 // ----------------------------------------------------------- 4: STATEMACHINE
 #elif TEST_MODE == 4
 void testSetup() {
-    say("--- STATEMACHINE NORMAL ---");
+    say("--- STATEMACHINE ---");
 }
 
 void testLoop() {
@@ -240,7 +230,7 @@ void testLoop() {
     }
 }
 #else
-#error "TEST_MODE debe ser 1, 2, 3 o 4"
+#error "1, 2, 3 o 4"
 #endif
 
 void setup() {
