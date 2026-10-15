@@ -23,7 +23,7 @@ void ShiftReg::init(uint8_t data, uint8_t clock, uint8_t latch, uint8_t oe) {
 void ShiftReg::write(uint8_t bit, bool level) {
     if(bit > 7) return;
     if(level) sState |= (uint8_t)(1u << bit);
-    else sState &= (uint8_t)~(1u<<bit);
+    else sState &= (uint8_t)~(1u << bit);
 }
 
 void ShiftReg::flush(bool force) {

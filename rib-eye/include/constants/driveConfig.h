@@ -7,11 +7,12 @@ namespace DriveConfig {
     constexpr float kDegToRad = 3.14159265358979f / 180.0f;
 
     constexpr float kTSize = 0.30f;
-    constexpr float kBSpeed = 150.0f;
-    constexpr float kMinOutput = 100.0f;
+    constexpr float kBSpeed = 140.0f;
+    constexpr float kMinOutput = 70.0f;
     constexpr float kSlow = 0.10f;
-    constexpr float kStopTol = 0.04f;
+    constexpr float kStopTol = 0.03f;
     constexpr float kMaxSteer = 40.0f;
+    constexpr float kTrim = 0.0f;
 
     constexpr float kRScale = 1.0f;
 
@@ -19,11 +20,11 @@ namespace DriveConfig {
     constexpr bool kImu = true;
     constexpr bool kUltra = true;
 
-    constexpr float kYawKp = 200.0f;
+    constexpr float kYawKp = 220.0f;
     constexpr float kYawKi = 0.0f;
     constexpr float kYawKd = 6.0f;
 
-    constexpr float kEncKp = 400.0f;
+    constexpr float kEncKp = 80.0f;
 
     constexpr float kUMax = 14.0f;
     constexpr float kUTarget = 9.0f;
@@ -39,14 +40,13 @@ namespace DriveConfig {
     constexpr float kSteerKd = 12.0f;
     constexpr float kSteerTol = 2.5f;
     constexpr uint8_t kSteerST = 5; // Settle Ticks
-    constexpr float kSteerMax = 200.0f;
-    constexpr float kSteerMin = 80.0f;
-    constexpr float kFilterA = 0.5f; // Alpha
+    constexpr float kSteerMax = 180.0f;
+    constexpr float kSteerMin = 100.0f;
     constexpr float kSteerDeg90 = 90.0f;
 
     constexpr uint16_t kFWallmm = 100;
     constexpr float kSWallcm = 15.0f; // cm
-    constexpr unsigned long kDecideDelayMs = 1000;
+    constexpr unsigned long kDecideDelayMs = 800;
     constexpr unsigned long kSteerSms = 300; // Settle ms
     constexpr bool kRightPref = true;
     constexpr bool kDeadEnd180 = true;

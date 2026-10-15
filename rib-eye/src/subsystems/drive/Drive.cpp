@@ -169,7 +169,7 @@ bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float ba
 
     const float totalSteer = constrain(encSteer + imuSteer, -Cfg::kMaxSteer, Cfg::kMaxSteer);
 
-    setOpenLoop(constrain((int)(speed + totalSteer + 5), 0, 255), constrain((int)(speed - totalSteer), 0, 255));
+    setOpenLoop(constrain((int)(speed + totalSteer + Cfg::kTrim), 0, 255), constrain((int)(speed - totalSteer), 0, 255));
     return false;
 }
 

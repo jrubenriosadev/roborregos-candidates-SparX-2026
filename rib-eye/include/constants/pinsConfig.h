@@ -8,10 +8,10 @@ namespace Pins {
     constexpr uint8_t kVirtualPinBase = 100;
 
     struct ShiftReg {
-        static constexpr uint8_t kData = 0;
-        static constexpr uint8_t kClock = 0;
-        static constexpr uint8_t kLatch = 0;
-        static constexpr uint8_t kOE = 0;
+        static constexpr uint8_t kData = 27;
+        static constexpr uint8_t kClock = 15;
+        static constexpr uint8_t kLatch = 26;
+        static constexpr uint8_t kOE = 13;
     };
 
     struct Led {
@@ -35,10 +35,10 @@ namespace Pins {
     };
 
     struct ToF {
-        static constexpr uint8_t kLeftXShut = 13;
+        static constexpr uint8_t kLeftXShut = 4;
         static constexpr uint8_t kLeftAddr = 0x30;
 
-        static constexpr uint8_t kRightXShut = 4;
+        static constexpr uint8_t kRightXShut = 2;
         static constexpr uint8_t kRightAddr = 0x29;
     };
 
