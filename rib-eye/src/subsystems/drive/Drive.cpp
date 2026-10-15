@@ -1,18 +1,29 @@
 #include "Drive.hpp"
 #include "../include/constants/driveConfig.h"
 #include <math.h>
+#include "../../components/shiftreg/ShiftReg.hpp"
 
 namespace Cfg = DriveConfig;
 
 Drive::Drive()
-    : _leftMotor(
-        Pins::Motors::kLeftMotorIN1, Pins::Motors::kLeftMotorIN2, Pins::Motors::kLeftPWM,
+    : _flMotor(
+        Pins::Motors::kFLMotorIN1, Pins::Motors::kFLMotorIN2, Pins::Motors::kLeftPWM,
         Pins::Motors::kLeftEncoderA, Pins::Motors::kLeftEncoderB, Pins::Motors::kLeftPPR,
         Pins::Motors::kWheelDiameter, Pins::Motors::leftInversion
       ),
-      _rightMotor(
-        Pins::Motors::kRightMotorIN1, Pins::Motors::kRightMotorIN2, Pins::Motors::kRightPWM,
+      _frMotor(
+        Pins::Motors::kFRMotorIN1, Pins::Motors::kFRMotorIN2, Pins::Motors::kRightPWM,
         Pins::Motors::kRightEncoderA, Pins::Motors::kRightEncoderB, Pins::Motors::kRightPPR,
+        Pins::Motors::kWheelDiameter, Pins::Motors::rightInversion
+      ),
+      _blMotor(
+        Pins::Motors::kBLMotorIN1, Pins::Motors::kBLMotorIN2, Pins::Motors::kLeftPWM,
+        Pins::kNan, Pins::kNan, Pins::Motors::kLeftPPR,
+        Pins::Motors::kWheelDiameter, Pins::Motors::leftInversion
+      ),
+      _brMotor(
+        Pins::Motors::kBRMotorIN1, Pins::Motors::kBRMotorIN2, Pins::Motors::kRightPWM,
+        Pins::kNan, Pins::kNan, Pins::Motors::kRightPPR,
         Pins::Motors::kWheelDiameter, Pins::Motors::rightInversion
       ),
       _steerPID(Cfg::kYawKp, Cfg::kYawKi, Cfg::kYawKd, -255.0f, 255.0f),
@@ -22,23 +33,29 @@ Drive::Drive()
       _wallErrFilt(0.0f) {}
 
 void Drive::init() {
+    ShiftReg::init(Pins::ShiftReg::kData, Pins::ShiftReg::kClock, Pins::ShiftReg::kLatch, Pins::ShiftReg::kOE);
     pinMode(Pins::Motors::kStandBy, OUTPUT);
     digitalWrite(Pins::Motors::kStandBy, HIGH);
-    
-    _leftMotor.init();
-    _rightMotor.init();
+    _flMotor.init();
+    _frMotor.init();
+    _blMotor.init();
+    _brMotor.init();
     _steerPID.setAngleWrapping(true);
     _turnPID.setAngleWrapping(true);
 }
 
 void Drive::stop() {
-    _leftMotor.stop();
-    _rightMotor.stop();
+    _flMotor.stop();
+    _frMotor.stop();
+    _blMotor.stop();
+    _brMotor.stop();
 }
 
 void Drive::setOpenLoop(int leftSpeed, int rightSpeed) {
-    _leftMotor.move(leftSpeed);
-    _rightMotor.move(rightSpeed);
+    _flMotor.move(leftSpeed);
+    _frMotor.move(rightSpeed);
+    _blMotor.move(leftSpeed);
+    _brMotor.move(rightSpeed);
 }
 
 void Drive::prepAngle(float deg_yawAngle) {
@@ -79,8 +96,8 @@ bool Drive::turnToAngle(float currentYawDeg) {
 }
 
 void Drive::prepMoveTile(float targetDistanceMeters, float targetYawDeg) {
-    _leftMotor.resetEncoder();
-    _rightMotor.resetEncoder();
+    _flMotor.resetEncoder();
+    _frMotor.resetEncoder();
     _steerPID.reset();
     _wallErrFilt = 0.0f;
 
@@ -91,8 +108,8 @@ void Drive::prepMoveTile(float targetDistanceMeters, float targetYawDeg) {
 bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float baseSpeed) {
     if (isnan(currentYaw)) currentYaw = 0.0f;
 
-    const float l = _leftMotor.getDistanceMeters();
-    const float r = _rightMotor.getDistanceMeters() * Cfg::kRScale;
+    const float l = _flMotor.getDistanceMeters();
+    const float r = _frMotor.getDistanceMeters() * Cfg::kRScale;
     const float remaining = _targetDistance - (l + r) * 0.5f;
 
     if (remaining <= Cfg::kStopTol) {
@@ -156,7 +173,7 @@ bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float ba
     return false;
 }
 
-long Drive::getLeftEncoder() const { return _leftMotor.getEncoder(); }
-long Drive::getRightEncoder() const { return _rightMotor.getEncoder(); }
-float Drive::getLeftDistance() const { return _leftMotor.getDistanceMeters(); }
-float Drive::getRightDistance() const { return _rightMotor.getDistanceMeters(); }
+long Drive::getLeftEncoder() const { return _flMotor.getEncoder(); }
+long Drive::getRightEncoder() const { return _frMotor.getEncoder(); }
+float Drive::getLeftDistance() const { return _flMotor.getDistanceMeters(); }
+float Drive::getRightDistance() const { return _frMotor.getDistanceMeters(); }

@@ -1,5 +1,7 @@
 #include "Motor.hpp"
 #include <math.h>
+#include "constants/pinsConfig.h"
+#include "../shiftreg/ShiftReg.hpp"
 
 Motor* Motor::instances[Motor::C] = {nullptr};
 
@@ -22,28 +24,45 @@ static const ISRFunc isrTable[8] = {
     &Motor::isrWrapper<7>
 };
 
+namespace {
+    bool isVirtual(uint8_t p) { return p != Pins::kNan && p>=Pins::kVirtualPinBase;}
+    bool isReal(uint8_t p) { return p!= Pins::kNan && p<Pins::kVirtualPinBase;}
+    void writeDirPin(uint8_t p, bool v) {
+        if(isVirtual(p)) ShiftReg::write(p - Pins::kVirtualPinBase, v);
+        else if(isReal(p)) digitalWrite(p, v);
+    }
+
+    void setDir(uint8_t in1, uint8_t in2, bool a, bool b) {
+        writeDirPin(in1, a);
+        writeDirPin(in2, b);
+        ShiftReg::flush();
+    }
+}
+
 Motor::Motor(
     uint8_t pinIN1, uint8_t pinIN2, uint8_t pinPWM, uint8_t pinEncoderA, uint8_t pinEncoderB, float ppr, float wheelDiameterM, bool inverted) 
     : _pinIN1(pinIN1), _pinIN2(pinIN2), _pinPWM(pinPWM), _pinEncoderA(pinEncoderA), _pinEncoderB(pinEncoderB), _inverted(inverted), _ppr(ppr), _wheelDiameter(wheelDiameterM), e_count(0), _lastInterruptTime(0), last_count(0), last_vel_time(0), current_rpm(0.0f), current_radps(0.0f), _slotIndex(255) {}
 
 Motor::~Motor() {
     stop();
-    detachInterrupt(digitalPinToInterrupt(_pinEncoderA));
+    if(_pinEncoderA != Pins::kNan) digitalPinToInterrupt(_pinEncoderA);
     if(_slotIndex < C) {
         instances[_slotIndex] = nullptr;
     }
 }
 
 void Motor::init() {
-    pinMode(_pinIN1, OUTPUT);
-    pinMode(_pinIN2, OUTPUT);
+    if(isReal(_pinIN1)) pinMode(_pinIN1, OUTPUT);
+    if(isReal(_pinIN2)) pinMode(_pinIN2, OUTPUT);
     pinMode(_pinPWM, OUTPUT);
-
-    pinMode(_pinEncoderA, INPUT_PULLUP);
-    pinMode(_pinEncoderB, INPUT_PULLUP);
     
     stop();
     resetEncoder();
+
+    if(_pinEncoderA == Pins::kNan) return;
+
+    pinMode(_pinEncoderA, INPUT_PULLUP);
+    pinMode(_pinEncoderB, INPUT_PULLUP);
 
     for(uint8_t i = 0; i < C; ++i) {
         if(instances[i] == nullptr) {
@@ -61,12 +80,10 @@ void Motor::move(int speed) {
     if(_inverted) speed = -speed;
 
     if(speed > 0) {
-        digitalWrite(_pinIN1, HIGH);
-        digitalWrite(_pinIN2, LOW);
+        setDir(_pinIN1, _pinIN2, true, false);
         analogWrite(_pinPWM, speed);
     } else if(speed < 0) {
-        digitalWrite(_pinIN1, LOW);
-        digitalWrite(_pinIN2, HIGH);
+        setDir(_pinIN1, _pinIN2, false, true);
         analogWrite(_pinPWM, -speed);
     } else {
         stop();
@@ -82,14 +99,12 @@ void Motor::backward(uint8_t speed) {
 }
 
 void Motor::stop() {
-    digitalWrite(_pinIN1, LOW);
-    digitalWrite(_pinIN2, LOW);
+    setDir(_pinIN1, _pinIN2, false, false);
     analogWrite(_pinPWM, 0);
 }
 
 void Motor::brake() {
-    digitalWrite(_pinIN1, HIGH);
-    digitalWrite(_pinIN2, HIGH);
+    setDir(_pinIN1, _pinIN2, true, true);
     analogWrite(_pinPWM, 255);
 }
 

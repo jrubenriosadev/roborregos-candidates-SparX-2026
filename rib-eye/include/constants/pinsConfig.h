@@ -4,6 +4,15 @@
 #include <Arduino.h>
 
 namespace Pins {
+    constexpr uint8_t kNan = 255;
+    constexpr uint8_t kVirtualPinBase = 100;
+
+    struct ShiftReg {
+        static constexpr uint8_t kData = 0;
+        static constexpr uint8_t kClock = 0;
+        static constexpr uint8_t kLatch = 0;
+        static constexpr uint8_t kOE = 0;
+    };
 
     struct Led {
         static constexpr uint8_t LED_PIN = 0;
@@ -34,6 +43,34 @@ namespace Pins {
     };
 
     struct Motors {
+        static constexpr uint8_t kFLMotorIN1 = 100;
+        static constexpr uint8_t kFLMotorIN2 = 101;
+        static constexpr uint8_t kFRMotorIN1 = 102;
+        static constexpr uint8_t kFRMotorIN2 = 103;
+
+        static constexpr uint8_t kBLMotorIN1 = 104;
+        static constexpr uint8_t kBLMotorIN2 = 105;
+        static constexpr uint8_t kBRMotorIN1 = 106;
+        static constexpr uint8_t kBRMotorIN2 = 107;
+
+        static constexpr uint8_t kLeftEncoderA = 17; // 17
+        static constexpr uint8_t kLeftEncoderB = 16; // 16
+        static constexpr uint8_t kLeftPWM = 25;
+        static constexpr float kLeftPPR = 480.0f;
+
+        static constexpr uint8_t kRightEncoderA = 19; // 19
+        static constexpr uint8_t kRightEncoderB = 18; // 18
+        static constexpr uint8_t kRightPWM = 33;
+        static constexpr float kRightPPR = 480.0f;
+
+        static constexpr bool leftInversion = false;
+        static constexpr bool rightInversion = true;
+
+        static constexpr uint8_t kStandBy = 5;
+        static constexpr float kWheelDiameter = 0.067f;
+    };
+    /*
+    struct Motors {
         static constexpr uint8_t kLeftMotorIN1 = 27; // 27
         static constexpr uint8_t kLeftMotorIN2 = 26; // 26
         static constexpr uint8_t kLeftEncoderA = 17; // 17
@@ -52,7 +89,7 @@ namespace Pins {
 
         static constexpr uint8_t kStandBy = 5;
         static constexpr float kWheelDiameter = 0.067f;
-    };
+    };*/
 }
 
 #endif

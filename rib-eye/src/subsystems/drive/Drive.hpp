@@ -26,7 +26,7 @@ public:
     float getRightDistance() const;
 
 private:
-    Motor _leftMotor, _rightMotor;
+    Motor _flMotor, _frMotor, _blMotor, _brMotor;
     PIDController _steerPID, _turnPID;
     float _targetYaw;
     float _targetDistance;
