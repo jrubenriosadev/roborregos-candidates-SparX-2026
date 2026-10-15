@@ -1,7 +1,7 @@
 #include "DriveMotion.hpp"
 #include <math.h>
-#include "../../../include/constants/driveConfig.h"
-#include "../c/MazeConfig.hpp"
+#include "constants/driveConfig.h"
+#include "../comp/MazeConfig.hpp"
 
 namespace {
     float normalizeYaw(float a) {

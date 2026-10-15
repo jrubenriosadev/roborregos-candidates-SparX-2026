@@ -1,7 +1,7 @@
 #include "MazeStateMachine.hpp"
 #include "MazeConfig.hpp"
-#include "../mapping/MapUpdater.hpp"
-#include "../planning/PathPlanner.hpp"
+#include "../m/MapUpdater.hpp"
+#include "../p/PathPlanner.hpp"
 
 namespace maze {
 

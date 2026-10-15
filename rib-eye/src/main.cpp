@@ -1,33 +1,44 @@
-#define TEST_MODE 4  // 1=color  2=openloop  3=tile PID  4=statemachine
+#define TEST_MODE 5  // 1=color  2=openloop  3=tile PID  4=statemachine  5=MAZE (competencia)
+
 
 #include <Arduino.h>
 #include "container/RobotContainer.hpp"
 #include "BluetoothSerial.h"
 
+
 #if TEST_MODE == 4
 #include "stateMachine/StateMachine.hpp"
+#elif TEST_MODE == 5
+#include "challenges/maze/hardware/MazeMain.hpp"
 #endif
+
 
 BluetoothSerial bluetooth;
 RobotContainer container;
 #if TEST_MODE == 4
 StateMachine stateMachine(container);
+#elif TEST_MODE == 5
+MazeMain mazeMain(container);
 #endif
+
 
 constexpr unsigned long kControlPeriod = 20000UL;
 unsigned long nextTick = 0;
 unsigned long lastPrint = 0;
+
 
 void say(const char* msg) {
     Serial.println(msg);
     bluetooth.println(msg);
 }
 
+
 char readCommand() {
     if (Serial.available()) return (char)Serial.read();
     if (bluetooth.available()) return (char)bluetooth.read();
     return 0;
 }
+
 
 void recoverI2C(uint8_t sdaPin, uint8_t sclPin) {
     pinMode(sdaPin, INPUT_PULLUP);
@@ -42,6 +53,7 @@ void recoverI2C(uint8_t sdaPin, uint8_t sclPin) {
     pinMode(sclPin, INPUT);
 }
 
+
 const char* colorName(ColorDetected c) {
     switch (c) {
         case ColorDetected::RED:     return "ROJO";
@@ -54,14 +66,17 @@ const char* colorName(ColorDetected c) {
     }
 }
 
+
 #if TEST_MODE == 1
 void testSetup() {
     say("--- TEST COLOR ---");
 }
 
+
 void testLoop() {
     container.getDrive().stop();
     const ColorDetected c = container.getColorDetected();
+
 
     if (millis() - lastPrint >= 250) {
         lastPrint = millis();
@@ -72,11 +87,13 @@ void testLoop() {
     }
 }
 
+
 #elif TEST_MODE == 2
 int pwm = 100;
 int cmdL = 0, cmdR = 0;
 unsigned long cmdStart = 0;
 constexpr unsigned long kAutoStopMs = 3000;
+
 
 void apply(int l, int r) {
     cmdL = l; cmdR = r;
@@ -84,9 +101,11 @@ void apply(int l, int r) {
     container.getDrive().setOpenLoop(l, r);
 }
 
+
 void testSetup() {
     say("--- TEST OPENLOOP ---");
 }
+
 
 void testLoop() {
     const char c = readCommand();
@@ -101,10 +120,12 @@ void testLoop() {
         default: break;
     }
 
+
     if ((cmdL != 0 || cmdR != 0) && millis() - cmdStart > kAutoStopMs) {
         cmdL = cmdR = 0;
         container.getDrive().stop();
     }
+
 
     if (millis() - lastPrint >= 250) {
         lastPrint = millis();
@@ -118,6 +139,7 @@ void testLoop() {
     }
 }
 
+
 #elif TEST_MODE == 3
 enum class TS { IDLE, MOVING, PAUSE };
 TS ts = TS::IDLE;
@@ -128,6 +150,7 @@ int tilesDone = 0;
 constexpr unsigned long kTileTimeoutMs = 5000;
 constexpr unsigned long kPauseMs = 1000;
 
+
 float yawErr(float a, float b) {
     float e = a - b;
     while (e > 180.0f) e -= 360.0f;
@@ -135,11 +158,13 @@ float yawErr(float a, float b) {
     return e;
 }
 
+
 void startTile() {
     container.getDrive().prepMoveTile(DriveConfig::kTSize, lockedYaw);
     moveStart = millis();
     ts = TS::MOVING;
 }
+
 
 void testSetup() {
     delay(500);
@@ -150,6 +175,7 @@ void testSetup() {
     snprintf(b, sizeof(b), "r: %.2f", lockedYaw);
     say(b);
 }
+
 
 void testLoop() {
     const char c = readCommand();
@@ -167,13 +193,16 @@ void testLoop() {
         continuous = false;
     }
 
+
     Drive& d = container.getDrive();
     const float yaw = container.getBno().getRelativeYaw();
+
 
     switch (ts) {
         case TS::IDLE:
             d.stop();
             break;
+
 
         case TS::MOVING: {
             const bool done = d.moveTile(yaw, container.getLeftDistance(), container.getRightDistance(), DriveConfig::kBSpeed);
@@ -209,7 +238,6 @@ void testLoop() {
     }
 }
 
-// ----------------------------------------------------------- 4: STATEMACHINE
 #elif TEST_MODE == 4
 void testSetup() {
     say("--- STATEMACHINE ---");
@@ -229,8 +257,30 @@ void testLoop() {
         say(b);
     }
 }
+
+#elif TEST_MODE == 5
+void testSetup() {
+    say("--- MAZE ---");
+}
+
+void testLoop() {
+    mazeMain.update();
+
+    if (millis() - lastPrint >= 250) {
+        lastPrint = millis();
+        const maze::MazeStateMachine& m = mazeMain.machine();
+        const maze::GridPose& g = m.pose();
+        char b[160];
+        snprintf(b, sizeof(b), "%s/%s pos(%d,%d) hd:%s trj:%u vis:%d fin:%s err:%s",
+                 maze::stateName(m.state()), m.phaseName(),
+                 g.p.x, g.p.y, maze::d_name(g.h),
+                 (unsigned)m.trajectory().size(), m.map().visitedCount(),
+                 m.finishFound() ? "SI" : "no", maze::errorName(m.error()));
+        say(b);
+    }
+}
 #else
-#error "1, 2, 3 o 4"
+#error "TEST_MODE debe ser 1, 2, 3, 4 o 5"
 #endif
 
 void setup() {
@@ -256,6 +306,7 @@ void setup() {
     nextTick = micros();
 }
 
+
 void loop() {
     const unsigned long now = micros();
     if ((long)(now - nextTick) < 0) return;
@@ -265,3 +316,4 @@ void loop() {
     container.update();
     testLoop();
 }
+

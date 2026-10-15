@@ -17,55 +17,55 @@ namespace maze {
     const char* errorName(MazeError e);
 
     class MazeStateMachine {
-    public:
-        MazeStateMachine(Maze& maze, Sensors& sensors, MotionController& motion);
+        public:
+            MazeStateMachine(Maze& maze, Sensors& sensors, MotionController& motion);
 
-        void update();
+            void update();
 
-        MazeState state() const { return state_; }
-        MazeError error() const { return error_; }
-        const char* phaseName() const;
-        const GridPose& pose() const { return navigator_.pose(); }
-        const Trajectory& trajectory() const { return trajectory_; }
-        const Trajectory& returnLog() const { return returnLog_; }
-        const Maze& map() const { return maze_; }
-        bool finishFound() const { return maze_.hasFinish(); }
+            MazeState state() const { return state_; }
+            MazeError error() const { return error_; }
+            const char* phaseName() const;
+            const GridPose& pose() const { return navigator_.pose(); }
+            const Trajectory& trajectory() const { return trajectory_; }
+            const Trajectory& returnLog() const { return returnLog_; }
+            const Maze& map() const { return maze_; }
+            bool finishFound() const { return maze_.hasFinish(); }
 
-    private:
-        enum class Phase { START_SCAN, SCANNING, TURN_FOR_BACK, DECIDE, STEPPING, ROUTE_NEXT, ROUTE_STEPPING };
+        private:
+            enum class Phase { START_SCAN, SCANNING, TURN_FOR_BACK, DECIDE, STEPPING, ROUTE_NEXT, ROUTE_STEPPING };
 
-        Maze& maze_;
-        Sensors& sensors_;
-        MotionController& motion_;
-        Navigator navigator_;
-        Explorer explorer_;
-        Trajectory trajectory_;
-        Trajectory returnLog_;
+            Maze& maze_;
+            Sensors& sensors_;
+            MotionController& motion_;
+            Navigator navigator_;
+            Explorer explorer_;
+            Trajectory trajectory_;
+            Trajectory returnLog_;
 
-        MazeState state_;
-        Phase phase_;
-        MazeError error_;
-        int scanRetries_;
-        int moveRetries_;
-        int initTicks_;
-        bool turnedForBack_;
-        ExploreDecision pending_;
-        Position stepFrom_;
-        Direction stepDir_;
-        std::vector<Position> route_;
-        std::size_t routeIdx_;
+            MazeState state_;
+            Phase phase_;
+            MazeError error_;
+            int scanRetries_;
+            int moveRetries_;
+            int initTicks_;
+            bool turnedForBack_;
+            ExploreDecision pending_;
+            Position stepFrom_;
+            Direction stepDir_;
+            std::vector<Position> route_;
+            std::size_t routeIdx_;
 
-        void enter(MazeState next);
-        void fail(MazeError e);
-        void updateInit();
-        void updateExploring();
-        void updateTravel();
-        void prepareFinishRoute();
-        void prepareReturnRoute();
-        void onRouteDone();
-        bool beginStep(Direction dir);
-        void onStepFailed(NavStatus s);
-        bool startCellBackUnknown() const;
+            void enter(MazeState next);
+            void fail(MazeError e);
+            void updateInit();
+            void updateExploring();
+            void updateTravel();
+            void prepareFinishRoute();
+            void prepareReturnRoute();
+            void onRouteDone();
+            bool beginStep(Direction dir);
+            void onStepFailed(NavStatus s);
+            bool startCellBackUnknown() const;
     };
 
 }
