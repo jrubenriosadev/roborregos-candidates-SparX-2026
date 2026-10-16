@@ -9,6 +9,7 @@ enum class States {
     MOVING,
     DELAY,
     DECIDE,
+    APPROACH,
     STEERING,
     TURN_DELAY,
     STOPPED

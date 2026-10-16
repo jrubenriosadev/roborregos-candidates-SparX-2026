@@ -1,4 +1,4 @@
-// 1=color  2=openloop  3=tile PID  4=statemachine  5=MAZE (competencia)  6=sensores (sin motores)
+// 1=color  2=openloop  3=tile PID  4=statemachine  5=MAZE  6=sensores
 #define TEST_MODE 4
 
 #include <Arduino.h>

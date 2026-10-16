@@ -14,6 +14,7 @@ public:
     void setOpenLoop(int leftSpeed, int rightSpeed);
     void stop();
 
+    bool approachFront(float mm);
     void prepAngle(float deg_yawAngle);
     bool turnToAngle(float current_yawDeg);
 

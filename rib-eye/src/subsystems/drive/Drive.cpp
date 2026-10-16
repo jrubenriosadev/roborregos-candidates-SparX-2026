@@ -38,6 +38,17 @@ void Drive::setOpenLoop(int leftSpeed, int rightSpeed) {
     _rightMotor.move(rightSpeed);
 }
 
+bool Drive::approachFront(float mm) {
+    const float err = mm - Cfg::kTurnDist;
+    if(fabs(err) <= 10) {
+        stop();
+        return true;
+    }
+    const int p = err > 0 ? Cfg::kApproachPwm : -Cfg::kApproachPwm;
+    setOpenLoop(p,p);
+    return false;
+}
+
 void Drive::prepAngle(float deg_yawAngle) {
     _steerPID.reset();
     _turnPID.reset();
