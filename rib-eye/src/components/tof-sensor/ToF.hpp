@@ -22,6 +22,8 @@ class ToF {
         uint16_t getDistance() const;
         bool isUp() const;
         ToFStates getState() const;
+        uint32_t getErrorCount() const;
+        int getLastStatus() const;
 
     private:
         Adafruit_VL53L0X _lox;
@@ -33,6 +35,8 @@ class ToF {
         uint16_t _currentDistanceMm;
         unsigned long _lastMT;
         unsigned long _timeout_ms;
+        uint32_t _errCount;
+        int _lastStatus;
 };
 
 #endif

@@ -26,25 +26,22 @@ namespace Pins {
     };
 
     struct ToF {
-        static constexpr uint8_t kLeftXShut = 13;
-        static constexpr uint8_t kLeftAddr = 0x28;
-
-        static constexpr uint8_t kRightXShut = 4;
-        static constexpr uint8_t kRightAddr = 0x29;
+        static constexpr uint8_t kLeftXShut = 4;
+        static constexpr uint8_t kLeftAddr = 0x29;
     };
 
     struct Motors {
-        static constexpr uint8_t kLeftMotorIN1 = 27; // 27 26
-        static constexpr uint8_t kLeftMotorIN2 = 26; // 26 17
+        static constexpr uint8_t kLeftMotorIN1 = 26; // 27 26
+        static constexpr uint8_t kLeftMotorIN2 = 27; // 26 17
         static constexpr uint8_t kLeftEncoderA = 17; // 17a
         static constexpr uint8_t kLeftEncoderB = 16; // 16
         static constexpr uint8_t kLeftPWM = 25;
         static constexpr float kLeftPPR = 480.0f;
         static constexpr bool leftInversion = false;
 
-        static constexpr uint8_t kRightMotorIN1 = 2; // 2
-        static constexpr uint8_t kRightMotorIN2 = 15; // 15
-        static constexpr uint8_t kRightEncoderA = 18; // 19
+        static constexpr uint8_t kRightMotorIN1 = 15; // 2
+        static constexpr uint8_t kRightMotorIN2 = 2; // 15
+        static constexpr uint8_t kRightEncoderA = 32; // 19
         static constexpr uint8_t kRightEncoderB = 19; // 18
         static constexpr uint8_t kRightPWM = 33;
         static constexpr float kRightPPR = 480.0f;;

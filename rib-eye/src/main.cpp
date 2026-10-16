@@ -1,5 +1,5 @@
 // 1=color  2=openloop  3=tile PID  4=statemachine  5=MAZE (competencia)  6=sensores (sin motores)
-#define TEST_MODE 6
+#define TEST_MODE 4
 
 #include <Arduino.h>
 #include "container/RobotContainer.hpp"
@@ -34,15 +34,36 @@ char readCommand() {
     return 0;
 }
 
+void i2cScan(TwoWire& bus, const char* name) {
+    Serial.printf("Scan %s:", name);
+    int n = 0;
+    for (uint8_t a = 1; a < 127; a++) {
+        bus.beginTransmission(a);
+        if (bus.endTransmission() == 0) { Serial.printf(" 0x%02X", a); n++; }
+    }
+    Serial.println(n ? "" : " (nada)");
+}
+
 void recoverI2C(uint8_t sdaPin, uint8_t sclPin) {
     pinMode(sdaPin, INPUT_PULLUP);
     pinMode(sclPin, OUTPUT);
-    for (int i = 0; i < 10; i++) {
+    
+    for (int i = 0; i < 16; i++) {
         digitalWrite(sclPin, LOW);
-        delayMicroseconds(5);
+        delayMicroseconds(10);
         digitalWrite(sclPin, HIGH);
-        delayMicroseconds(5);
+        delayMicroseconds(10);
+        if (digitalRead(sdaPin) == HIGH) break; // SDA liberado
     }
+
+    pinMode(sdaPin, OUTPUT);
+    digitalWrite(sdaPin, LOW);
+    delayMicroseconds(10);
+    digitalWrite(sclPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(sdaPin, HIGH);
+    delayMicroseconds(10);
+
     pinMode(sdaPin, INPUT);
     pinMode(sclPin, INPUT);
 }
@@ -226,9 +247,9 @@ void testLoop() {
     if (millis() - lastPrint >= 250) {
         lastPrint = millis();
         char b[160];
-        snprintf(b, sizeof(b), "Yaw:%7.2f | ToF L:%4u R:%4u mm | US L:%5.1f R:%5.1f cm | %s",
+        snprintf(b, sizeof(b), "Yaw:%7.2f | ToF L:%4u| US L:%5.1f R:%5.1f cm | %s",
                  container.getBno().getRelativeYaw(),
-                 container.getTofLeftMm(), container.getTofRightMm(),
+                 container.getTofLeftMm(),
                  container.getLeftDistance(), container.getRightDistance(),
                  colorName(container.getColorDetected()));
         say(b);
@@ -269,10 +290,11 @@ void testLoop() {
 
     if (millis() - lastPrint >= 250) {
         lastPrint = millis();
-        char b[200];
-        snprintf(b, sizeof(b), "Yaw:%7.2f | ToF L:%4u R:%4u mm rdy:%d | US L:%5.1f R:%5.1f cm | %s",
+        char b[240];
+        snprintf(b, sizeof(b), "Yaw:%7.2f | ToF L:%4u mm rdy:%d err:%lu| US L:%5.1f R:%5.1f cm | %s",
                  container.getBno().getRelativeYaw(),
-                 container.getTofLeftMm(), container.getTofRightMm(), (int)container.tofReady(),
+                 container.getTofLeftMm(), (int)container.tofReady(),
+                 (unsigned long)container.getTofL().getErrorCount(),
                  container.getLeftDistance(), container.getRightDistance(),
                  colorName(container.getColorDetected()));
         say(b);
@@ -283,20 +305,23 @@ void testLoop() {
 #endif
 
 void setup() {
+    pinMode(Pins::ToF::kLeftXShut, OUTPUT);
+    digitalWrite(Pins::ToF::kLeftXShut, LOW);
+
     Serial.begin(115200);
     bluetooth.begin("RIBEYE");
     while (!Serial && millis() < 3000);
 
     recoverI2C(21, 22);
-    recoverI2C(32, 23);
+    recoverI2C(5, 18);
 
     Wire.begin(21, 22);
     Wire.setClock(100000);
-    Wire.setTimeOut(50);
+    Wire.setTimeOut(10);
 
-    Wire1.begin(32, 23);
+    Wire1.begin(5, 18);
     Wire1.setClock(100000);
-    Wire1.setTimeOut(50);
+    Wire1.setTimeOut(10);
 
     container.init();
     container.getDrive().stop();
@@ -304,7 +329,6 @@ void setup() {
     testSetup();
     nextTick = micros();
 }
-
 void loop() {
     const unsigned long now = micros();
     if ((long)(now - nextTick) < 0) return;

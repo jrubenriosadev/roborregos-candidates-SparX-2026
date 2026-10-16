@@ -47,6 +47,7 @@ class RobotContainer {
         uint16_t getTofLeftMm() const;
         uint16_t getTofRightMm() const;
         bool tofReady() const;
+        ToF& getTofL();
 
         ColorDetected getColorDetected();
         RGB getLastRGB() const;
@@ -57,7 +58,7 @@ class RobotContainer {
         ColorSensor _tcs;
         ColorDetected _lastColor;
         Ultrasonic _leftUltra, _rightUltra;
-        ToF _tofL, _tofR;
+        ToF _tofL;
         RGB _lastRGB;
 
         WallFilter _leftFilter, _rightFilter;

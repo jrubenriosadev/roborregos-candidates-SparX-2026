@@ -28,33 +28,29 @@ RobotContainer::RobotContainer()
       _leftUltra(Pins::Ultrasonic::kLeftEcho, Pins::Ultrasonic::kLeftTrigger, Pins::Ultrasonic::maxRange),
       _rightUltra(Pins::Ultrasonic::kRightEcho, Pins::Ultrasonic::kRightTrigger, Pins::Ultrasonic::maxRange),
       _tofL(Pins::ToF::kLeftXShut, Pins::ToF::kLeftAddr),
-      _tofR(Pins::ToF::kRightXShut, Pins::ToF::kRightAddr),
       _lastUltraToggle(0),
       _readToggle(false) {}
 
 void RobotContainer::init() {
-    //TODO: probar el i2c
-    for (int attempt = 0; attempt < 5; ++attempt) {
-        _tofL.powerOff();
-        _tofR.powerOff();
-        delay(20);
-        const bool okL = _tofL.init(Wire1);
-        delay(15);
-        const bool okR = _tofR.init(Wire1);
-        delay(15);
-        if (okL && okR) break;
-        //if (okR) break;
+    if (_tcs.init()) {
+        _tcs.setLed(true);
     }
 
     if (_bno.init(Wire)) {
         _bno.resetHeading();
     }
 
-    if (_tcs.init()) {
-        _tcs.setLed(true);
-    }
-    _drive.init();
+    _tofL.powerOff();
+    delay(10);
 
+    for (int attempt = 0; attempt < 5; ++attempt) {
+        if (_tofL.init(Wire1)) {
+            break;
+        }
+        delay(20);
+    }
+
+    _drive.init();
     _leftUltra.init();
     _rightUltra.init();
 }
@@ -62,7 +58,6 @@ void RobotContainer::init() {
 void RobotContainer::update() {
     _bno.update();
     _tofL.update();
-    _tofR.update();
 
     unsigned long c = millis();
     if (c - _lastUltraToggle >= 40) {
@@ -89,8 +84,8 @@ float RobotContainer::getLeftDistance() const { return _leftFilter.valid() ? _le
 float RobotContainer::getRightDistance() const { return _rightFilter.valid() ? _rightFilter.value() : Pins::Ultrasonic::maxRange; }
 
 uint16_t RobotContainer::getTofLeftMm() const { return _tofL.getDistance(); }
-uint16_t RobotContainer::getTofRightMm() const { return _tofR.getDistance(); }
-bool RobotContainer::tofReady() const { return _tofL.isUp() && _tofR.isUp(); }
+ToF& RobotContainer::getTofL() { return _tofL; }
+bool RobotContainer::tofReady() const { return _tofL.isUp(); }
 //bool RobotContainer::tofReady() const { return _tofR.isUp(); }
 
 ColorDetected RobotContainer::getColorDetected() {
@@ -116,7 +111,7 @@ RGB RobotContainer::getLastRGB() const {
 
 bool RobotContainer::frontWall() const {
     if (!tofReady()) return true;
-    return _tofL.getDistance() < DriveConfig::kFWallmm || _tofR.getDistance() < DriveConfig::kFWallmm;
+    return _tofL.getDistance() < DriveConfig::kFWallmm;
 }
 
 bool RobotContainer::leftWall() const {
