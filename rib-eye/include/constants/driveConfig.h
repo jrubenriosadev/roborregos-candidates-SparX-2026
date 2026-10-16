@@ -6,33 +6,33 @@
 namespace DriveConfig {
     constexpr float kDegToRad = 3.14159265358979f / 180.0f;
 
-    constexpr float kTSize = 0.37f;
+    constexpr float kTSize = 0.3f;
     constexpr float kBSpeed = 140.0f;
-    constexpr float kMinOutput = 70.0f;
+    constexpr float kMinOutput = 100.0f;
     constexpr float kSlow = 0.10f;
     constexpr float kStopTol = 0.03f;
     constexpr float kMaxSteer = 40.0f;
-    constexpr float kTrim = 5.0f;
+    constexpr float kTrim = 10.0f;
 
     constexpr float kRScale = 1.0f;
 
     constexpr bool kEnc = true;
     constexpr bool kImu = true;
-    constexpr bool kUltra = true;
+    constexpr bool kUltra = false;
 
     constexpr float kYawKp = 220.0f;
     constexpr float kYawKi = 0.0f;
     constexpr float kYawKd = 6.0f;
 
-    constexpr float kEncKp = 160.0f;
+    constexpr float kEncKp = 140.0f;
 
     constexpr float kUMax = 14.0f;
     constexpr float kUTarget = 9.0f;
     constexpr float kUDeadband = 1.0f;
     constexpr float kUFilterA = 0.3f;
     constexpr float kUErrClamp = 8.0f;
-    constexpr float kUDegPcm = 3.0f;
-    constexpr float kUMaxOffDeg = 10.0f;
+    constexpr float kUDegPcm = 1.5f;
+    constexpr float kUMaxOffDeg = 5.0f;
     constexpr float kUMaxYawErrDeg = 15.0f;
     constexpr float kUOffsetDec = 0.9f; // Decay
 

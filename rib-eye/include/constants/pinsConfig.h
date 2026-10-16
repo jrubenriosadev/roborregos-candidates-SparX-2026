@@ -27,17 +27,17 @@ namespace Pins {
 
     struct ToF {
         static constexpr uint8_t kLeftXShut = 13;
-        static constexpr uint8_t kLeftAddr = 0x30;
+        static constexpr uint8_t kLeftAddr = 0x28;
 
         static constexpr uint8_t kRightXShut = 4;
-        static constexpr uint8_t kRightAddr = 0x31;
+        static constexpr uint8_t kRightAddr = 0x29;
     };
 
     struct Motors {
-        static constexpr uint8_t kLeftMotorIN1 = 17; // 27 26
-        static constexpr uint8_t kLeftMotorIN2 = 16; // 26 17
-        static constexpr uint8_t kLeftEncoderA = 27; // 17a
-        static constexpr uint8_t kLeftEncoderB = 26; // 16
+        static constexpr uint8_t kLeftMotorIN1 = 27; // 27 26
+        static constexpr uint8_t kLeftMotorIN2 = 26; // 26 17
+        static constexpr uint8_t kLeftEncoderA = 17; // 17a
+        static constexpr uint8_t kLeftEncoderB = 16; // 16
         static constexpr uint8_t kLeftPWM = 25;
         static constexpr float kLeftPPR = 480.0f;
         static constexpr bool leftInversion = false;

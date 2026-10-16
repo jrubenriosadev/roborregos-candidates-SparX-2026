@@ -88,8 +88,9 @@ void Drive::prepMoveTile(float targetDistanceMeters, float targetYawDeg) {
 bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float baseSpeed) {
     if (isnan(currentYaw)) currentYaw = 0.0f;
 
-    const float l = _leftMotor.getDistanceMeters();
+    //const float l = _leftMotor.getDistanceMeters();
     const float r = _rightMotor.getDistanceMeters() * Cfg::kRScale;
+    const float l = r;
     const float remaining = _targetDistance - (l + r) * 0.5f;
 
     if (remaining <= Cfg::kStopTol) {
