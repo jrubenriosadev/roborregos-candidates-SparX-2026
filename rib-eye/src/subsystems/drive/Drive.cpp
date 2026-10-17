@@ -213,7 +213,6 @@ void Drive::prepMoveBack(float distanceMeters, float targetYawDeg) {
     _targetYaw = targetYawDeg * Cfg::kDegToRad;
 }
 
-// Reversa recta con el rumbo sostenido por el BNO (la distancia se mide con el encoder derecho, igual que moveTile)
 bool Drive::moveBack(float currentYaw) {
     if (isnan(currentYaw)) currentYaw = 0.0f;
 

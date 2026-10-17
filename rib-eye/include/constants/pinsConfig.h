@@ -26,8 +26,8 @@ namespace Pins {
     };
 
     struct Line {
-        static constexpr uint8_t kLeft = 0;
-        static constexpr uint8_t kRight = 0;
+        static constexpr uint8_t kLeft = 36;
+        static constexpr uint8_t kRight = 39;
     };
 
     struct ToF {

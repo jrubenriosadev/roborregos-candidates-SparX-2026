@@ -21,7 +21,6 @@ StateMachine::StateMachine(RobotContainer& container)
 void StateMachine::startTurn(float deltaDeg) {
     _lockedYaw = normalizeY(_lockedYaw + deltaDeg);
 
-    // Solo se acerca si hay una pared frontal dentro de la casilla; si no, gira directo
     if (_container.tofReady() && _container.getTofLeftMm() <= Cfg::kApproachMaxMm) {
         _container.getDrive().prepApproach();
         _currentState = States::APPROACH;

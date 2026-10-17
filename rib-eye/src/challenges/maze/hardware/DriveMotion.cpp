@@ -29,8 +29,6 @@ void DriveMotion::startTurn(maze::Direction target) {
     Drive& drive = c_.getDrive();
     turnYaw_ = yawFor(target);
 
-    // Antes de un giro real, se acerca a la pared frontal (ToF) para quedar centrado en la casilla.
-    // Solo si la pared esta dentro de la casilla actual, para nunca invadir la siguiente.
     const float yaw = c_.getBno().getRelativeYaw();
     const bool realTurn = !isfinite(yaw) || fabsf(normalizeYaw(turnYaw_ - yaw)) > DriveConfig::kApproachMinTurnDeg;
     if (realTurn && c_.tofReady() && c_.getTofLeftMm() <= DriveConfig::kApproachMaxMm) {

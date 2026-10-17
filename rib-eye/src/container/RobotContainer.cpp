@@ -53,8 +53,8 @@ void RobotContainer::init() {
         delay(20);
     }
 
-    //_lineL.init();
-    //_lineR.init();
+    _lineL.init();
+    _lineR.init();
 
     _drive.init();
     _leftUltra.init();

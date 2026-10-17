@@ -4,7 +4,6 @@
 
 #include "Arduino.h"
 
-// TCRT5000 (seguidor de linea)
 namespace LineConfig {
     constexpr bool kDigital = false;    
     constexpr bool kWhiteIsHigh = false;   
