@@ -1,6 +1,6 @@
 // 1=color  2=openloop  3=tile PID  4=statemachine  5=MAZE  6=sensores
 // 7=LEVELS fase 1 (LIME->RED)  8=LEVELS fase 2 (RED->RED)  9=LEVELS fase 3 (RED->LIME)  10=LEVELS completo
-#define TEST_MODE 4
+#define TEST_MODE 6
 
 #include <Arduino.h>
 #include "container/RobotContainer.hpp"
@@ -388,13 +388,13 @@ void setup() {
     while (!Serial && millis() < 3000);
 
     recoverI2C(21, 22);
-    recoverI2C(5, 18);
+    recoverI2C(23, 18);
 
     Wire.begin(21, 22);
     Wire.setClock(100000);
     Wire.setTimeOut(10);
 
-    Wire1.begin(5, 18);
+    Wire1.begin(23, 18);
     Wire1.setClock(100000);
     Wire1.setTimeOut(10);
 

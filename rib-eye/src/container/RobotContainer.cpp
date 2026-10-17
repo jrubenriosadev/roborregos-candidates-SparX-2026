@@ -53,14 +53,13 @@ void RobotContainer::init() {
         delay(20);
     }
 
-    _lineL.init();
-    _lineR.init();
+    //_lineL.init();
+    //_lineR.init();
 
     _drive.init();
     _leftUltra.init();
     _rightUltra.init();
 
-    // Sin esto el primer update() intentaba "ponerse al dia" con millis() leyendo los ultrasonicos seguidos (diafonia)
     _lastUltraToggle = millis();
 }
 
