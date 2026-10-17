@@ -1,5 +1,6 @@
 // 1=color  2=openloop  3=tile PID  4=statemachine  5=MAZE  6=sensores
 // 7=LEVELS fase 1 (LIME->RED)  8=LEVELS fase 2 (RED->RED)  9=LEVELS fase 3 (RED->LIME)  10=LEVELS completo
+// 1 color, 2 open, 3 tile, 4 prestatemachine, 5 maze, 6 sensores, 7 fase 1, 8 fase 2, 9 fase 3
 #define TEST_MODE 6
 
 #include <Arduino.h>
@@ -75,14 +76,14 @@ void recoverI2C(uint8_t sdaPin, uint8_t sclPin) {
 
 const char* colorName(ColorDetected c) {
     switch (c) {
-        case ColorDetected::RED:     return "ROJO";
-        case ColorDetected::GREEN:   return "VERDE";
-        case ColorDetected::CYAN:    return "CYAN";
-        case ColorDetected::YELLOW:  return "AMARILLO";
-        case ColorDetected::ORANGE:  return "NARANJA";
-        case ColorDetected::MAGENTA: return "MAGENTA";
-        case ColorDetected::LIME:    return "LIME";
-        default:                     return "NINGUNO";
+        case ColorDetected::RED:return "ROJO";
+        case ColorDetected::GREEN:return "VERDE";
+        case ColorDetected::CYAN:return "CYAN";
+        case ColorDetected::YELLOW:return "AMARILLO";
+        case ColorDetected::ORANGE:return "NARANJA";
+        case ColorDetected::MAGENTA:return "MAGENTA";
+        case ColorDetected::LIME:return "LIME";
+        default:return "NINGUNO";
     }
 }
 

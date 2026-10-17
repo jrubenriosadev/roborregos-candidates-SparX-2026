@@ -9,9 +9,6 @@
 #include "../maze/s/Sensors.hpp"
 
 namespace levels {
-
-    // Seccion 1: empieza en LIME, explora (DFS del maze) hasta tomar la pelota con el intake de ATRAS
-    // y termina en el checkpoint RED. Si llega a RED sin pelota sigue explorando y regresa.
     class Section1 {
         public:
             Section1(maze::Maze& maze, maze::Sensors& sensors, BallMotion& motion);

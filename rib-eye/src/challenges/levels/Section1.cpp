@@ -117,7 +117,6 @@ namespace levels {
                 if (s == maze::NavStatus::RUNNING || s == maze::NavStatus::IDLE) break;
                 if (s != maze::NavStatus::SUCCESS) { fail(Section1Error::POSE_UNCERTAIN); break; }
 
-                // Ya tenemos la pelota: la casilla donde estaba es un callejon (3 paredes), no se vuelve a entrar
                 hasBall_ = true;
                 maze_.markVisited(pending_.target);
                 maze_.seal(pending_.target, maze::opposite(pending_.dir));
@@ -161,7 +160,6 @@ namespace levels {
         maze::integrateReadings(maze_, p, r);
 
         if (r.cValid && r.color == maze::CellColor::RED) {
-            // El checkpoint es la frontera de la seccion: nunca se explora mas alla de el
             maze_.setEnd(p.p);
             maze_.seal(p.p, maze::opposite(p.h));
             if (hasBall_) { finish(); return; }
@@ -186,14 +184,12 @@ namespace levels {
     }
 
     void Section1::updateDecide() {
-        // Con pelota y checkpoint conocido ya no hay nada que explorar
         if (hasBall_ && maze_.hasEnded()) { startRoute(); return; }
 
         const maze::GridPose p = navigator_.pose();
         const maze::ExploreDecision d = explorer_.decide(p);
         switch (d.type) {
             case maze::ExploreType::COMPLETE:
-                // Se exploro todo: sin pelota se va al checkpoint de todos modos (puntos parciales)
                 if (maze_.hasEnded()) startRoute();
                 else fail(Section1Error::FINISH_NOT_FOUND);
                 break;
@@ -214,7 +210,6 @@ namespace levels {
     }
 
     void Section1::afterAligned() {
-        // Antes de entrar a una casilla nueva se mira de frente: si ahi esta la pelota NO se entra de frente (se empujaria)
         if (pending_.type == maze::ExploreType::MOVE_NEW && !hasBall_) {
             peekTicks_ = 0;
             peekN_ = 0;
@@ -238,7 +233,6 @@ namespace levels {
 
         const bool ball = peekN_ >= Cfg::kPeekMinSamples && peekHits_ * 100 >= peekN_ * Cfg::kBallAgreePct;
         if (ball) {
-            // El intake esta ATRAS: se gira 180 para meter la espalda a la casilla de la pelota
             if (!navigator_.startTurn(maze::turn180(navigator_.pose().h))) { fail(Section1Error::DESYNC); return; }
             state_ = Section1State::BALL_TURN;
             return;

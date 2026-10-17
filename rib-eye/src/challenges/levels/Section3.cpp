@@ -13,7 +13,6 @@ namespace levels {
             return a;
         }
 
-        // Rumbo global que indica cada color; NAN si el color no da direccion
         float yawForColor(ColorDetected c) {
             switch (c) {
                 case ColorDetected::ORANGE: return Cfg::kYawUpDeg;
@@ -41,7 +40,6 @@ namespace levels {
         _error = Section3Error::NONE;
         _tiles = 0;
         _retries = 0;
-        // Se arranca en el checkpoint RED: la primera casilla esta de frente (arriba)
         startAlign(Cfg::kYawUpDeg);
     }
 
@@ -92,7 +90,6 @@ namespace levels {
             return;
         }
 
-        // Lectura dudosa (NONE, RED, GREEN o votos repartidos): se espera y se vuelve a leer
         if (++_retries > Cfg::kColorRetries) { fail(Section3Error::COLOR_UNREADABLE); return; }
         _t0 = millis();
         _state = Section3State::SETTLE;
@@ -116,7 +113,6 @@ namespace levels {
             case Section3State::TURN_DELAY:
                 drive.stop();
                 if (millis() - _t0 >= Cfg::kTurnDelayMs) {
-                    // El rumbo es el GLOBAL del color, no relativo al robot
                     drive.prepMoveTile(DriveConfig::kTSize, _targetYaw);
                     _t0 = millis();
                     _state = Section3State::MOVE;

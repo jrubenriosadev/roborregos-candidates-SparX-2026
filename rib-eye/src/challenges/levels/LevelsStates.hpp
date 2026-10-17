@@ -2,15 +2,12 @@
 
 namespace levels {
 
-    // Seccion 1: pelota (reusa el motor de exploracion del maze)
     enum class Section1State { INIT, START_SCAN, SCANNING, TURN_FOR_BACK, DECIDE, TURNING, PEEKING, STEPPING, BALL_TURN, BALL_REVERSE, BALL_ADVANCE, ROUTE_NEXT, ROUTE_STEPPING, DONE, FAULT };
     enum class Section1Error { NONE, HARDWARE_NOT_READY, SENSOR_INVALID, MOVE_FAILED, POSE_UNCERTAIN, DESYNC, EXPLORATION_INCOMPLETE, FINISH_NOT_FOUND, NO_ROUTE_TO_FINISH };
 
-    // Seccion 2: carriles con lineas blancas (TCRT5000)
     enum class Section2State { ALIGN, DRIVE, BACKOFF, TURN_SIDE, SHIFT, TURN_BACK, DONE, FAULT };
     enum class Section2Error { NONE, NO_FREE_LANE, MOVE_TIMEOUT, TURN_TIMEOUT };
 
-    // Seccion 3: camino de colores con rumbo global (BNO)
     enum class Section3State { ALIGN, TURN_DELAY, MOVE, SETTLE, READING, DONE, FAULT };
     enum class Section3Error { NONE, COLOR_UNREADABLE, MOVE_TIMEOUT, TURN_TIMEOUT, TOO_MANY_TILES };
 

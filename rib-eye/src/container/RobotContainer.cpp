@@ -14,7 +14,7 @@ const Target TABLE[] {
     {ColorDetected::ORANGE, {160.0f, 85.0f, 50.0f}}, // 150 75 35 ------ // 160 85 50
     {ColorDetected::GREEN, {75.0f, 125.0f, 60.0f}}, // 90 120 40 ------ // 75 125 60
     {ColorDetected::YELLOW, {120.0f, 110.0f, 50.0f}}, // 120 100 30 ----- // 120 110 50
-    {ColorDetected::LIME, {97.0f, 118.0f, 55.0f}} // ESTIMADO (entre GREEN y YELLOW): calibrar con TEST_MODE 1
+    {ColorDetected::LIME, {97.0f, 118.0f, 55.0f}} // estimado
 };
 
 const int num_colors = sizeof(TABLE) / sizeof(TABLE[0]);

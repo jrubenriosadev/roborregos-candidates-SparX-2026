@@ -5,9 +5,6 @@
 #include "../../container/RobotContainer.hpp"
 
 namespace levels {
-
-    // Seccion 3: sigue los colores del piso con el rumbo GLOBAL del BNO (no relativo al robot):
-    // ORANGE = arriba, CYAN = derecha, MAGENTA = abajo, YELLOW = izquierda. Termina al leer LIME.
     class Section3 {
         public:
             explicit Section3(RobotContainer& container);

@@ -51,8 +51,6 @@ void Drive::prepApproach() {
     _apprDriving = false;
 }
 
-// Acercamiento pulsado: avanza/retrocede un pulso, se detiene, espera una lectura fresca del ToF y repite.
-// Devuelve true cuando termina (alineado, sin pared cercana o timeout).
 bool Drive::approachFront(float mm) {
     const unsigned long now = millis();
 

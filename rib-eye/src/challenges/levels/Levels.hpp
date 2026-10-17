@@ -10,14 +10,10 @@
 #include "../maze/m/Maze.hpp"
 #include "../../container/RobotContainer.hpp"
 
-// Pista B (Levels): Seccion 1 (LIME -> RED con la pelota), Seccion 2 (RED -> RED, lineas blancas),
-// Seccion 3 (RED -> LIME, camino de colores con BNO global).
 class Levels {
     public:
         explicit Levels(RobotContainer& container);
 
-        // first: seccion con la que arranca. startColor: color bajo el robot que dispara el arranque (NONE = solo go()).
-        // runAll: true encadena las 3 secciones; false termina al acabar la primera.
         void arm(levels::LevelsPhase first, ColorDetected startColor, bool runAll);
         void go();
         void abort();

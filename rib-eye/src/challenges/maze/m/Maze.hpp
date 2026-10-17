@@ -32,7 +32,6 @@ namespace maze {
 
             bool setConnection(Position p, Direction d, WallState s);
             bool canMove(Position p, Direction d) const;
-            // Cierra todas las salidas de la casilla menos keepOpen (la pelota/el checkpoint son callejones aunque el sensor vea abierto)
             void seal(Position p, Direction keepOpen);
 
             void markVisited(Position p);

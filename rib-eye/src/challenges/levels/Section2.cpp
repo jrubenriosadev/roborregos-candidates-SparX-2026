@@ -60,10 +60,6 @@ namespace levels {
         return _container.lineLeftWhite() || _container.lineRightWhite();
     }
 
-    // Orden de preferencia segun el carril actual (los carriles bloqueados en esta posicion no se repiten):
-    //   desde el centro (inicio): centro -> derecha -> izquierda
-    //   desde un carril lateral: el lado contrario -> centro (el hueco de 30 cm esta del otro lado de la linea,
-    //   y el carril central siempre queda bloqueado por una linea que tapa media pista)
     int Section2::nextLane() const {
         static const int fromCenter[3] = {0, 1, -1};
         static const int fromRight[3] = {-1, 0, 1};
@@ -104,13 +100,10 @@ namespace levels {
                 break;
 
             case Section2State::DRIVE: {
-                // Se vigila la linea en cada tick (20 ms): una linea de 2 cm se brincaria si solo se revisara cada 1/3 de casilla
                 const float traveled = _segBase + drive.getRightDistance();
 
                 if (_tried && traveled > _blockAt + Cfg::kClearM) _tried = 0;
 
-                // Sobre el checkpoint rojo el TCRT puede leer "blanco": no se vigila hasta ver el piso verde,
-                // ni en los ultimos cm antes del checkpoint de salida
                 if (!_armed && !lineBlocked()) _armed = true;
                 const bool nearEnd = traveled + Cfg::kLineAheadM > Cfg::kFieldEndM - Cfg::kLineMaskEndM;
 
