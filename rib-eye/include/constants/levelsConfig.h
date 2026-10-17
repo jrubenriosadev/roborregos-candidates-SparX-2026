@@ -52,5 +52,6 @@ namespace LevelsConfig {
     constexpr int kBallAgreePct = 60;
     constexpr float kBallReverseM = 0.25f;
 
+}
 #endif
 
