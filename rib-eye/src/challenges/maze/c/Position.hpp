@@ -8,7 +8,7 @@ namespace maze {
         constexpr Position() : x(0), y(0) {}
         constexpr Position(int _x, int _y) : x(_x), y(_y) {}
         constexpr bool operator==(const Position& o) const { return x == o.x && y == o.y; }
-        constexpr bool operator!=(const Position& o) const { return x != o.x && y != o.y; }    
+        constexpr bool operator!=(const Position& o) const { return x != o.x || y != o.y; }    
     };
 
     constexpr Position kInvalidPosition(-1,-1);

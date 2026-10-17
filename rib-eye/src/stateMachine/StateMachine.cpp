@@ -20,9 +20,10 @@ StateMachine::StateMachine(RobotContainer& container)
 
 void StateMachine::startTurn(float deltaDeg) {
     _lockedYaw = normalizeY(_lockedYaw + deltaDeg);
-    const float wallDist = _container.getTofLeftMm();
-    if(wallDist < Cfg::kTurnDist || wallDist > Cfg::kTurnDist) {
-        _waitStartTime = millis();
+
+    // Solo se acerca si hay una pared frontal dentro de la casilla; si no, gira directo
+    if (_container.tofReady() && _container.getTofLeftMm() <= Cfg::kApproachMaxMm) {
+        _container.getDrive().prepApproach();
         _currentState = States::APPROACH;
     } else {
         _container.getDrive().prepAngle(_lockedYaw);
@@ -105,13 +106,12 @@ void StateMachine::update() {
         }
 
         case States::APPROACH: {
-            const float wallmm = _container.getTofL().getDistance();
-            if(_container.getDrive().approachFront(wallmm)) {
-                millis() - _waitStartTime > Cfg::kApproachMillis;
+            if (_container.getDrive().approachFront(_container.getTofLeftMm())) {
                 _container.getDrive().stop();
                 _container.getDrive().prepAngle(_lockedYaw);
                 _currentState = States::STEERING;
             }
+            break;
         }
 
         case States::STEERING: {

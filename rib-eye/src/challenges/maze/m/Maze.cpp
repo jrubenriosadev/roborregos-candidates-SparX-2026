@@ -10,7 +10,7 @@ namespace maze {
 
     void Maze::reset() {
         for(int y = 0; y<kGridSize; ++y)
-            for(int x = 0; y<kGridSize; ++x) _cells[y][x] = Cell();
+            for(int x = 0; x<kGridSize; ++x) _cells[y][x] = Cell();
         _start = kStartPosition;
         _end = kInvalidPosition;
         _isEnd = false;
@@ -26,7 +26,7 @@ namespace maze {
 
     bool Maze::spanOk(Position p) const {
         const int x0 = std::min(_minX, p.x), x1 = std::max(_maxX, p.x);
-        const int y0 = std::min(_minX, p.y), y1 = std::max(_maxY, p.y);
+        const int y0 = std::min(_minY, p.y), y1 = std::max(_maxY, p.y);
         return (x1-x0+1) <= kSize && (y1-y0+1)<=kSize;
     }
 
@@ -36,8 +36,8 @@ namespace maze {
         _minX = std::min(_minX, p.x);
         _maxX = std::max(_maxX, p.x);
         
-        _minY = std::min(_minY, p.x);
-        _maxY = std::max(_maxY, p.x);
+        _minY = std::min(_minY, p.y);
+        _maxY = std::max(_maxY, p.y);
     }
 
     const Cell& Maze::cell(Position p) const {
@@ -67,13 +67,24 @@ namespace maze {
         const WallState oa = a.walls[di], ob = b.walls[oi];
         if((oa != WallState::UNKNOWN && oa != s) || (ob!= WallState::UNKNOWN && ob!= s)) {++_conflicts; return false;}
         a.walls[di] = s;
-        a.walls[oi] = s;
+        b.walls[oi] = s;
         if(s==WallState::OPEN) touch(n);
         return true;
     }
 
     bool Maze::canMove(Position p, Direction d) const {
         return connection(p,d) == WallState::OPEN && isInside(neighbor(p,d));
+    }
+
+    void Maze::seal(Position p, Direction keepOpen) {
+        if(!isInside(p)) return;
+        for(int i = 0; i < kDirCount; ++i) {
+            const Direction d = kAll[i];
+            if(d == keepOpen) continue;
+            const Position n = neighbor(p, d);
+            mut(p).walls[i] = WallState::WALL;
+            if(inBuffer(n)) mut(n).walls[toIndex(opposite(d))] = WallState::WALL;
+        }
     }
 
     void Maze::markVisited(Position p) {

@@ -14,12 +14,16 @@ public:
     void setOpenLoop(int leftSpeed, int rightSpeed);
     void stop();
 
+    void prepApproach();
     bool approachFront(float mm);
     void prepAngle(float deg_yawAngle);
     bool turnToAngle(float current_yawDeg);
 
     void prepMoveTile(float targetDistanceMeters, float targetYawDeg);
     bool moveTile(float currentYaw, float distLeft, float distRight, float baseSpeed = 140.0f);
+
+    void prepMoveBack(float distanceMeters, float targetYawDeg);
+    bool moveBack(float currentYaw);
 
     long getLeftEncoder() const;
     long getRightEncoder() const;
@@ -33,6 +37,13 @@ private:
     float _targetDistance;
     float _wallErrFilt;
     uint8_t _settleCount;
+
+    unsigned long _apprStart;
+    unsigned long _apprT;
+    unsigned long _apprPulse;
+    bool _apprDriving;
+
+    float _backDistance;
 };
 
 #endif

@@ -26,13 +26,37 @@ float DriveMotion::yawFor(maze::Direction d) const {
 }
 
 void DriveMotion::startTurn(maze::Direction target) {
-    c_.getDrive().prepAngle(yawFor(target));
-    mode_ = Mode::TURN;
+    Drive& drive = c_.getDrive();
+    turnYaw_ = yawFor(target);
+
+    // Antes de un giro real, se acerca a la pared frontal (ToF) para quedar centrado en la casilla.
+    // Solo si la pared esta dentro de la casilla actual, para nunca invadir la siguiente.
+    const float yaw = c_.getBno().getRelativeYaw();
+    const bool realTurn = !isfinite(yaw) || fabsf(normalizeYaw(turnYaw_ - yaw)) > DriveConfig::kApproachMinTurnDeg;
+    if (realTurn && c_.tofReady() && c_.getTofLeftMm() <= DriveConfig::kApproachMaxMm) {
+        drive.prepApproach();
+        mode_ = Mode::APPROACH;
+    } else {
+        drive.prepAngle(turnYaw_);
+        mode_ = Mode::TURN;
+    }
     t0_ = millis();
 }
 
 void DriveMotion::startMove(maze::Direction heading) {
     c_.getDrive().prepMoveTile(DriveConfig::kTSize, yawFor(heading));
+    mode_ = Mode::MOVE;
+    t0_ = millis();
+}
+
+void DriveMotion::startReverse(maze::Direction heading, float meters) {
+    c_.getDrive().prepMoveBack(meters, yawFor(heading));
+    mode_ = Mode::REVERSE;
+    t0_ = millis();
+}
+
+void DriveMotion::startAdvance(maze::Direction heading, float meters) {
+    c_.getDrive().prepMoveTile(meters, yawFor(heading));
     mode_ = Mode::MOVE;
     t0_ = millis();
 }
@@ -51,6 +75,15 @@ maze::NavStatus DriveMotion::update() {
         case Mode::IDLE:
             return NavStatus::IDLE;
 
+        case Mode::APPROACH:
+            if (drive.approachFront(c_.getTofLeftMm())) {
+                drive.stop();
+                drive.prepAngle(turnYaw_);
+                mode_ = Mode::TURN;
+                t0_ = millis();
+            }
+            return NavStatus::RUNNING;
+
         case Mode::TURN:
             if (drive.turnToAngle(yaw)) { mode_ = Mode::SETTLE; t0_ = millis(); return NavStatus::RUNNING; }
             if (millis() - t0_ > maze::MazeConfig::kTurnTimeoutMs) {
@@ -63,6 +96,19 @@ maze::NavStatus DriveMotion::update() {
         case Mode::SETTLE:
             drive.stop();
             if (millis() - t0_ >= maze::MazeConfig::kTurnSettleMs) { mode_ = Mode::IDLE; return NavStatus::SUCCESS; }
+            return NavStatus::RUNNING;
+
+        case Mode::REVERSE:
+            if (drive.moveBack(yaw)) {
+                drive.stop();
+                mode_ = Mode::IDLE;
+                return NavStatus::SUCCESS;
+            }
+            if (millis() - t0_ > maze::MazeConfig::kMoveTimeoutMs) {
+                drive.stop();
+                mode_ = Mode::IDLE;
+                return NavStatus::UNCERTAIN;
+            }
             return NavStatus::RUNNING;
 
         case Mode::MOVE:

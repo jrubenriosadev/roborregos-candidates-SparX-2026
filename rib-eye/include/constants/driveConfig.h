@@ -1,3 +1,4 @@
+
 #ifndef DEF_DRIVECONFIG
 #define DEF_DRIVECONFIG
 
@@ -5,9 +6,19 @@
 
 namespace DriveConfig {
     constexpr float kDegToRad = 3.14159265358979f / 180.0f;
-    constexpr float kTurnDist = 55;
-    constexpr float kApproachPwm = 20;
-    constexpr unsigned long kApproachMillis = 400; 
+    constexpr float kTurnDist = 55;                  
+    constexpr float kApproachPwm = 110;                 
+    constexpr float kApproachTolMm = 8.0f;          
+    constexpr float kApproachMaxMm = 120.0f;
+    constexpr float kApproachMsPerMm = 3.0f;       
+    constexpr unsigned long kApproachPulseMinMs = 30;
+    constexpr unsigned long kApproachPulseMaxMs = 150;
+    constexpr unsigned long kApproachPauseMs = 100; 
+    constexpr unsigned long kApproachMillis = 1000;
+    constexpr float kApproachMinTurnDeg = 30.0f;
+
+    constexpr float kBackPwm = 120.0f;
+    constexpr float kBackTol = 0.03f; 
 
     constexpr float kTSize = 0.3f;
     constexpr float kBSpeed = 140.0f;

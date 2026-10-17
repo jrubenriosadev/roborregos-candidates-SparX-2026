@@ -13,7 +13,8 @@ const Target TABLE[] {
     {ColorDetected::CYAN, {60.0f, 115.0f, 110.0f}}, // 50 110 95 -------- // 60 115 110
     {ColorDetected::ORANGE, {160.0f, 85.0f, 50.0f}}, // 150 75 35 ------ // 160 85 50
     {ColorDetected::GREEN, {75.0f, 125.0f, 60.0f}}, // 90 120 40 ------ // 75 125 60
-    {ColorDetected::YELLOW, {120.0f, 110.0f, 50.0f}} // 120 100 30 ----- // 120 110 50
+    {ColorDetected::YELLOW, {120.0f, 110.0f, 50.0f}}, // 120 100 30 ----- // 120 110 50
+    {ColorDetected::LIME, {97.0f, 118.0f, 55.0f}} // ESTIMADO (entre GREEN y YELLOW): calibrar con TEST_MODE 1
 };
 
 const int num_colors = sizeof(TABLE) / sizeof(TABLE[0]);
@@ -28,6 +29,8 @@ RobotContainer::RobotContainer()
       _leftUltra(Pins::Ultrasonic::kLeftEcho, Pins::Ultrasonic::kLeftTrigger, Pins::Ultrasonic::maxRange),
       _rightUltra(Pins::Ultrasonic::kRightEcho, Pins::Ultrasonic::kRightTrigger, Pins::Ultrasonic::maxRange),
       _tofL(Pins::ToF::kLeftXShut, Pins::ToF::kLeftAddr),
+      _lineL(Pins::Line::kLeft),
+      _lineR(Pins::Line::kRight),
       _lastUltraToggle(0),
       _readToggle(false) {}
 
@@ -50,14 +53,22 @@ void RobotContainer::init() {
         delay(20);
     }
 
+    _lineL.init();
+    _lineR.init();
+
     _drive.init();
     _leftUltra.init();
     _rightUltra.init();
+
+    // Sin esto el primer update() intentaba "ponerse al dia" con millis() leyendo los ultrasonicos seguidos (diafonia)
+    _lastUltraToggle = millis();
 }
 
 void RobotContainer::update() {
     _bno.update();
     _tofL.update();
+    _lineL.update();
+    _lineR.update();
 
     unsigned long c = millis();
     if (c - _lastUltraToggle >= 40) {
@@ -87,6 +98,11 @@ uint16_t RobotContainer::getTofLeftMm() const { return _tofL.getDistance(); }
 ToF& RobotContainer::getTofL() { return _tofL; }
 bool RobotContainer::tofReady() const { return _tofL.isUp(); }
 //bool RobotContainer::tofReady() const { return _tofR.isUp(); }
+
+bool RobotContainer::lineLeftWhite() const { return _lineL.isWhite(); }
+bool RobotContainer::lineRightWhite() const { return _lineR.isWhite(); }
+uint16_t RobotContainer::lineLeftRaw() const { return _lineL.getRaw(); }
+uint16_t RobotContainer::lineRightRaw() const { return _lineR.getRaw(); }
 
 ColorDetected RobotContainer::getColorDetected() {
     RGB c;

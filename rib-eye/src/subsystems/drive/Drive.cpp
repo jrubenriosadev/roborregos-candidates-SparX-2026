@@ -19,7 +19,13 @@ Drive::Drive()
       _turnPID(Cfg::kSteerKp, 0.0f, Cfg::kSteerKd, -255.0f, 255.0f),
       _targetYaw(0.0f),
       _targetDistance(Cfg::kTSize),
-      _wallErrFilt(0.0f) {}
+      _wallErrFilt(0.0f),
+      _settleCount(0),
+      _apprStart(0),
+      _apprT(0),
+      _apprPulse(0),
+      _apprDriving(false),
+      _backDistance(0.0f) {}
 
 void Drive::init() {
     _leftMotor.init();
@@ -38,14 +44,49 @@ void Drive::setOpenLoop(int leftSpeed, int rightSpeed) {
     _rightMotor.move(rightSpeed);
 }
 
+void Drive::prepApproach() {
+    stop();
+    _apprStart = millis();
+    _apprT = millis();
+    _apprDriving = false;
+}
+
+// Acercamiento pulsado: avanza/retrocede un pulso, se detiene, espera una lectura fresca del ToF y repite.
+// Devuelve true cuando termina (alineado, sin pared cercana o timeout).
 bool Drive::approachFront(float mm) {
-    const float err = mm - Cfg::kTurnDist;
-    if(fabs(err) <= 10) {
+    const unsigned long now = millis();
+
+    if (now - _apprStart > Cfg::kApproachMillis) {
         stop();
         return true;
     }
-    const int p = err > 0 ? Cfg::kApproachPwm : -Cfg::kApproachPwm;
-    setOpenLoop(p,p);
+
+    if (_apprDriving) {
+        if (now - _apprT < _apprPulse) return false;
+        stop();
+        _apprDriving = false;
+        _apprT = now;
+        return false;
+    }
+
+    if (now - _apprT < Cfg::kApproachPauseMs) return false;
+
+    if (mm > Cfg::kApproachMaxMm) {
+        stop();
+        return true;
+    }
+
+    const float err = mm - Cfg::kTurnDist;
+    if (fabsf(err) <= Cfg::kApproachTolMm) {
+        stop();
+        return true;
+    }
+
+    const int p = err > 0 ? (int)Cfg::kApproachPwm : -(int)Cfg::kApproachPwm;
+    _apprPulse = constrain((unsigned long)(fabsf(err) * Cfg::kApproachMsPerMm), Cfg::kApproachPulseMinMs, Cfg::kApproachPulseMaxMs);
+    setOpenLoop(p, p);
+    _apprDriving = true;
+    _apprT = now;
     return false;
 }
 
@@ -162,6 +203,33 @@ bool Drive::moveTile(float currentYaw, float distLeft, float distRight, float ba
     const float totalSteer = constrain(encSteer + imuSteer, -Cfg::kMaxSteer, Cfg::kMaxSteer);
 
     setOpenLoop(constrain((int)(speed + totalSteer + Cfg::kTrim), 0, 255), constrain((int)(speed - totalSteer), 0, 255));
+    return false;
+}
+
+void Drive::prepMoveBack(float distanceMeters, float targetYawDeg) {
+    _leftMotor.resetEncoder();
+    _rightMotor.resetEncoder();
+    _steerPID.reset();
+
+    _backDistance = distanceMeters;
+    _targetYaw = targetYawDeg * Cfg::kDegToRad;
+}
+
+// Reversa recta con el rumbo sostenido por el BNO (la distancia se mide con el encoder derecho, igual que moveTile)
+bool Drive::moveBack(float currentYaw) {
+    if (isnan(currentYaw)) currentYaw = 0.0f;
+
+    const float traveled = -_rightMotor.getDistanceMeters() * Cfg::kRScale;
+    if (_backDistance - traveled <= Cfg::kBackTol) {
+        stop();
+        return true;
+    }
+
+    const float yawRad = currentYaw * Cfg::kDegToRad;
+    const float imuOut = _steerPID.update(yawRad, _targetYaw);
+    const float steer = Cfg::kImu ? constrain(imuOut, -Cfg::kMaxSteer, Cfg::kMaxSteer) : 0.0f;
+
+    setOpenLoop(constrain((int)(-Cfg::kBackPwm + steer), -255, 0), constrain((int)(-Cfg::kBackPwm - steer), -255, 0));
     return false;
 }
 

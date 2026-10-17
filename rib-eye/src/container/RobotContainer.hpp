@@ -8,6 +8,7 @@
 #include "../components/ultrasonic/Ultrasonic.h"
 #include "../components/ultrasonic/WallFilter.hpp"
 #include "../components/tof-sensor/ToF.hpp"
+#include "../components/line-sensor/LineSensor.h"
 #include "../include/constants/pinsConfig.h"
 #include "../include/constants/driveConfig.h"
 
@@ -18,7 +19,8 @@ enum class ColorDetected {
     YELLOW,
     ORANGE,
     MAGENTA,
-    GREEN
+    GREEN,
+    LIME
 };
 
 class RobotContainer {
@@ -49,6 +51,11 @@ class RobotContainer {
         bool tofReady() const;
         ToF& getTofL();
 
+        bool lineLeftWhite() const;
+        bool lineRightWhite() const;
+        uint16_t lineLeftRaw() const;
+        uint16_t lineRightRaw() const;
+
         ColorDetected getColorDetected();
         RGB getLastRGB() const;
 
@@ -59,6 +66,7 @@ class RobotContainer {
         ColorDetected _lastColor;
         Ultrasonic _leftUltra, _rightUltra;
         ToF _tofL;
+        LineSensor _lineL, _lineR;
         RGB _lastRGB;
 
         WallFilter _leftFilter, _rightFilter;

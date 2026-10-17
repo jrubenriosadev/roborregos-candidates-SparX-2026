@@ -10,6 +10,7 @@ namespace {
             case ColorDetected::YELLOW:return maze::CellColor::YELLOW;
             case ColorDetected::ORANGE:return maze::CellColor::ORANGE;
             case ColorDetected::MAGENTA:return maze::CellColor::MAGENTA;
+            case ColorDetected::LIME:return maze::CellColor::LIME;
             case ColorDetected::NONE:return maze::CellColor::UNKNOWN;
         }
         return maze::CellColor::UNKNOWN;
@@ -18,11 +19,13 @@ namespace {
 
 bool RobotSensors::ready() { return c_.tofReady(); }
 
+unsigned RobotSensors::frontMm() { return c_.tofReady() ? c_.getTofLeftMm() : 2000; }
+
 void RobotSensors::beginScan() {
     active_ = true;
     start_ = millis();
     n_ = front_ = left_ = right_ = 0;
-    for (int i = 0; i < 7; ++i) colorVotes_[i] = 0;
+    for (int i = 0; i < kColors; ++i) colorVotes_[i] = 0;
 }
 
 void RobotSensors::sample() {
@@ -50,7 +53,7 @@ bool RobotSensors::pollScan(maze::SensorReadings& out) {
     out.rValid = enough;
 
     int best = 0;
-    for (int i = 1; i < 7; ++i) if (colorVotes_[i] > colorVotes_[best]) best = i;
+    for (int i = 1; i < kColors; ++i) if (colorVotes_[i] > colorVotes_[best]) best = i;
     if (enough && colorVotes_[best] * 100 >= n_ * maze::MazeConfig::kColorAgreePct) {
         out.color = toCellColor(static_cast<ColorDetected>(best));
         out.cValid = true;

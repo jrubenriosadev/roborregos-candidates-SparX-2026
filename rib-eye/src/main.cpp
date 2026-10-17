@@ -1,4 +1,5 @@
 // 1=color  2=openloop  3=tile PID  4=statemachine  5=MAZE  6=sensores
+// 7=LEVELS fase 1 (LIME->RED)  8=LEVELS fase 2 (RED->RED)  9=LEVELS fase 3 (RED->LIME)  10=LEVELS completo
 #define TEST_MODE 4
 
 #include <Arduino.h>
@@ -9,6 +10,8 @@
 #include "stateMachine/StateMachine.hpp"
 #elif TEST_MODE == 5
 #include "challenges/maze/hardware/MazeMain.hpp"
+#elif TEST_MODE >= 7 && TEST_MODE <= 10
+#include "challenges/levels/Levels.hpp"
 #endif
 
 BluetoothSerial bluetooth;
@@ -17,6 +20,8 @@ RobotContainer container;
 StateMachine stateMachine(container);
 #elif TEST_MODE == 5
 MazeMain mazeMain(container);
+#elif TEST_MODE >= 7 && TEST_MODE <= 10
+Levels levelsRun(container);
 #endif
 
 constexpr unsigned long kControlPeriod = 20000UL;
@@ -76,6 +81,7 @@ const char* colorName(ColorDetected c) {
         case ColorDetected::YELLOW:  return "AMARILLO";
         case ColorDetected::ORANGE:  return "NARANJA";
         case ColorDetected::MAGENTA: return "MAGENTA";
+        case ColorDetected::LIME:    return "LIME";
         default:                     return "NINGUNO";
     }
 }
@@ -290,18 +296,87 @@ void testLoop() {
 
     if (millis() - lastPrint >= 250) {
         lastPrint = millis();
-        char b[240];
-        snprintf(b, sizeof(b), "Yaw:%7.2f | ToF L:%4u mm rdy:%d err:%lu| US L:%5.1f R:%5.1f cm | %s",
+        char b[280];
+        snprintf(b, sizeof(b), "Yaw:%7.2f | ToF L:%4u mm rdy:%d err:%lu| US L:%5.1f R:%5.1f cm | TCRT L:%4u%s R:%4u%s | %s",
                  container.getBno().getRelativeYaw(),
                  container.getTofLeftMm(), (int)container.tofReady(),
                  (unsigned long)container.getTofL().getErrorCount(),
                  container.getLeftDistance(), container.getRightDistance(),
+                 container.lineLeftRaw(), container.lineLeftWhite() ? "(B)" : "(v)",
+                 container.lineRightRaw(), container.lineRightWhite() ? "(B)" : "(v)",
                  colorName(container.getColorDetected()));
         say(b);
     }
 }
+
+// ---------------------------------------------------- 7-10: LEVELS (pista B)
+#elif TEST_MODE >= 7 && TEST_MODE <= 10
+void testSetup() {
+#if TEST_MODE == 7
+    say("--- LEVELS FASE 1: LIME -> RED (pelota con intake de ATRAS) ---");
+    levelsRun.arm(levels::LevelsPhase::SECTION1, ColorDetected::LIME, false);
+#elif TEST_MODE == 8
+    say("--- LEVELS FASE 2: RED -> RED (lineas blancas, TCRT) ---");
+    levelsRun.arm(levels::LevelsPhase::SECTION2, ColorDetected::NONE, false);
+#elif TEST_MODE == 9
+    say("--- LEVELS FASE 3: RED -> LIME (colores, BNO global) ---");
+    levelsRun.arm(levels::LevelsPhase::SECTION3, ColorDetected::RED, false);
 #else
-#error "1, 2, 3, 4, 5 o 6"
+    say("--- LEVELS COMPLETO: fase 1 -> 2 -> 3 ---");
+    levelsRun.arm(levels::LevelsPhase::SECTION1, ColorDetected::LIME, true);
+#endif
+    say("'g' inicia | 's' paro | 'z' fija el rumbo actual como 0 global (robot de frente a la pista)");
+}
+
+void testLoop() {
+    const char c = readCommand();
+    if (c == 'g') levelsRun.go();
+    else if (c == 's') levelsRun.abort();
+    else if (c == 'z') {
+        container.getBno().resetHeading();
+        say("rumbo global fijado en 0");
+    }
+
+    levelsRun.update();
+
+    if (millis() - lastPrint >= 250) {
+        lastPrint = millis();
+        char b[200];
+        const float yaw = container.getBno().getRelativeYaw();
+        switch (levelsRun.state()) {
+            case levels::LevelsState::SECTION1: {
+                const levels::Section1& s = levelsRun.section1();
+                snprintf(b, sizeof(b), "S1/%s pos(%d,%d) hd:%s pelota:%s ToF:%4u | yaw:%7.2f | err:%s",
+                         levels::stateName(s.state()), s.pose().p.x, s.pose().p.y, maze::d_name(s.pose().h),
+                         s.hasBall() ? "SI" : "no", container.getTofLeftMm(), yaw, levels::errorName(s.error()));
+                break;
+            }
+            case levels::LevelsState::SECTION2: {
+                const levels::Section2& s = levelsRun.section2();
+                snprintf(b, sizeof(b), "S2/%s carril:%+d avance:%.2f m | TCRT L:%4u%s R:%4u%s | yaw:%7.2f | err:%s",
+                         levels::stateName(s.state()), s.lane(), s.progress(),
+                         container.lineLeftRaw(), container.lineLeftWhite() ? "(B)" : "(v)",
+                         container.lineRightRaw(), container.lineRightWhite() ? "(B)" : "(v)",
+                         yaw, levels::errorName(s.error()));
+                break;
+            }
+            case levels::LevelsState::SECTION3: {
+                const levels::Section3& s = levelsRun.section3();
+                snprintf(b, sizeof(b), "S3/%s casillas:%d obj:%7.2f yaw:%7.2f | %s | err:%s",
+                         levels::stateName(s.state()), s.tiles(), s.targetYaw(), yaw,
+                         colorName(container.getColorDetected()), levels::errorName(s.error()));
+                break;
+            }
+            default:
+                snprintf(b, sizeof(b), "%s | yaw:%7.2f | %s", levels::stateName(levelsRun.state()), yaw,
+                         colorName(container.getColorDetected()));
+                break;
+        }
+        say(b);
+    }
+}
+#else
+#error "TEST_MODE: 1 a 10"
 #endif
 
 void setup() {
